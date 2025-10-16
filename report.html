@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports - Admin Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .navbar {
+            width: 100%;
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #1e5ba8;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.3s;
+            font-size: 14px;
+        }
+
+        .nav-links a:hover {
+            opacity: 0.8;
+        }
+
+        .btn-logout {
+            background: white;
+            color: #1e5ba8;
+            padding: 8px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .page-header {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+
+        .page-header h1 {
+            color: #1e5ba8;
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .page-header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .date-filter {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+
+        .date-filter h3 {
+            color: #333;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 15px;
+            align-items: end;
+            flex-wrap: wrap;
+        }
+
+        .filter-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .filter-item label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .filter-item input,
+        .filter-item select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .btn-generate {
+            background: #1e5ba8;
+            color: white;
+            padding: 10px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-generate:hover {
+            background: #164a8a;
+        }
+
+        .report-section {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+        }
+
+        .report-section h2 {
+            color: #1e5ba8;
+            font-size: 22px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            border-bottom: 2px solid #1e5ba8;
+            padding-bottom: 10px;
+        }
+
+        .stats-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #1e5ba8;
+        }
+
+        .stat-box h3 {
+            font-size: 32px;
+            color: #1e5ba8;
+            margin-bottom: 5px;
+        }
+
+        .stat-box p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .report-table th {
+            background: #1e5ba8;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .report-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 14px;
+        }
+
+        .report-table tr:hover {
+            background: #f5f5f5;
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        .progress-fill {
+            background: #1e5ba8;
+            height: 100%;
+            transition: width 0.3s;
+        }
+
+        .export-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-export {
+            background: #4caf50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-export:hover {
+            background: #45a049;
+        }
+
+        .btn-print {
+            background: #ff9800;
+            color: white;
+        }
+
+        .btn-print:hover {
+            background: #e68900;
+        }
+
+        footer {
+            padding: 30px 5%;
+            background: #1e5ba8;
+            text-align: center;
+            color: white;
+            margin-top: 50px;
+        }
+
+        footer p {
+            font-size: 14px;
+        }
+
+        .no-print {
+            /* This class helps hide elements during printing */
+        }
+
+        @media print {
+            .navbar, .export-buttons, .date-filter, footer {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar no-print">
+        <div class="logo">Admin Dashboard</div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="admin_dashboard.html">Dashboard</a>
+            <button class="btn-logout" onclick="alert('Logout functionality')">Logout</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>Feedback Reports</h1>
+            <p>Analyze student feedback data and track trends over time</p>
+        </div>
+
+        <div class="date-filter no-print">
+            <h3>Generate Report</h3>
+            <div class="filter-group">
+                <div class="filter-item">
+                    <label>From Date:</label>
+                    <input type="date" id="fromDate" value="2025-10-01">
+                </div>
+                <div class="filter-item">
+                    <label>To Date:</label>
+                    <input type="date" id="toDate" value="2025-10-15">
+                </div>
+                <div class="filter-item">
+                    <label>Report Type:</label>
+                    <select id="reportType">
+                        <option value="summary">Summary Report</option>
+                        <option value="detailed">Detailed Report</option>
+                        <option value="category">Category Analysis</option>
+                    </select>
+                </div>
+                <button class="btn-generate" onclick="generateReport()">Generate Report</button>
+            </div>
+        </div>
+
+        <!-- Overall Summary -->
+        <div class="report-section">
+            <h2>Overall Summary</h2>
+            <div id="summaryStats" class="stats-summary"></div>
+        </div>
+
+        <!-- Category-wise Breakdown -->
+        <div class="report-section">
+            <h2>Category-wise Breakdown</h2>
+            <table class="report-table">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Total</th>
+                        <th>Pending</th>
+                        <th>Resolved</th>
+                        <th>Percentage</th>
+                    </tr>
+                </thead>
+                <tbody id="categoryTbody"></tbody>
+            </table>
+        </div>
+
+        <!-- Urgency-wise Distribution -->
+        <div class="report-section">
+            <h2>Urgency-wise Distribution</h2>
+            <table class="report-table">
+                <thead>
+                    <tr>
+                        <th>Urgency Level</th>
+                        <th>Total Count</th>
+                        <th>Pending</th>
+                        <th>Resolved</th>
+                        <th>Percentage of Total</th>
+                    </tr>
+                </thead>
+                <tbody id="urgencyTbody"></tbody>
+            </table>
+        </div>
+
+        <!-- Monthly Trend -->
+        <div class="report-section">
+            <h2>Monthly Trend</h2>
+            <table class="report-table">
+                <thead>
+                    <tr>
+                        <th>Month</th>
+                        <th>Feedback Received</th>
+                        <th>Resolved</th>
+                        <th>Pending</th>
+                        <th>Resolution Rate</th>
+                    </tr>
+                </thead>
+                <tbody id="trendTbody"></tbody>
+            </table>
+        </div>
+
+        <div class="export-buttons no-print">
+            <button class="btn-export" onclick="exportReport('excel')">📊 Export to Excel</button>
+            <button class="btn-export btn-print" onclick="window.print()">🖨️ Print Report</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Student Feedback Portal. All rights reserved.</p>
+    </footer>
+
+    <script>
+        let allFeedbacks = [];
+        let filtered = [];
+
+        function parseDateInput(value) {
+            return value ? new Date(value + 'T00:00:00') : null;
+        }
+
+        async function loadData() {
+            // Try API, fallback to localStorage
+            try {
+                const res = await fetch('http://localhost:3000/api/feedbacks');
+                if (!res.ok) throw new Error('API error');
+                allFeedbacks = await res.json();
+                try { localStorage.setItem('feedbacks', JSON.stringify(allFeedbacks)); } catch (_) {}
+            } catch (_) {
+                try {
+                    allFeedbacks = JSON.parse(localStorage.getItem('feedbacks') || '[]');
+                } catch (e) {
+                    allFeedbacks = [];
+                }
+            }
+        }
+
+        function formatPercent(n) {
+            if (!isFinite(n)) return '0%';
+            return (Math.round(n * 1000) / 10).toFixed(1) + '%';
+        }
+
+        function groupBy(arr, keyFn) {
+            const map = new Map();
+            for (const item of arr) {
+                const key = keyFn(item);
+                map.set(key, (map.get(key) || []).concat(item));
+            }
+            return map;
+        }
+
+        function applyFilters() {
+            const from = parseDateInput(document.getElementById('fromDate').value);
+            const to = parseDateInput(document.getElementById('toDate').value);
+            filtered = allFeedbacks.filter(f => {
+                const d = new Date(f.createdAt);
+                if (from && d < from) return false;
+                if (to) {
+                    const end = new Date(to);
+                    end.setHours(23,59,59,999);
+                    if (d > end) return false;
+                }
+                return true;
+            });
+        }
+
+        function renderSummary() {
+            const total = filtered.length;
+            const resolved = filtered.filter(f => f.status === 'resolved').length;
+            const pending = total - resolved;
+            const resolvedPct = total ? Math.round((resolved / total) * 100) : 0;
+            const pendingPct = total ? 100 - resolvedPct : 0;
+
+            const summary = document.getElementById('summaryStats');
+            summary.innerHTML = `
+                <div class="stat-box">
+                    <h3>${total}</h3>
+                    <p>Total Feedback Received</p>
+                </div>
+                <div class="stat-box">
+                    <h3>${resolved}</h3>
+                    <p>Resolved (${resolvedPct}%)</p>
+                </div>
+                <div class="stat-box">
+                    <h3>${pending}</h3>
+                    <p>Pending (${pendingPct}%)</p>
+                </div>
+            `;
+        }
+
+        function renderCategoryTable() {
+            const tbody = document.getElementById('categoryTbody');
+            tbody.innerHTML = '';
+            const byCat = groupBy(filtered, f => f.category || 'Other');
+            const rows = [];
+            let total = 0, totalPending = 0, totalResolved = 0;
+            byCat.forEach((items, cat) => {
+                const t = items.length;
+                const r = items.filter(f => f.status === 'resolved').length;
+                const p = t - r;
+                total += t; totalPending += p; totalResolved += r;
+                rows.push({ cat, t, p, r });
+            });
+            rows.sort((a,b) => b.t - a.t);
+            for (const row of rows) {
+                const tr = document.createElement('tr');
+                const pct = total ? ((row.t / total) * 100) : 0;
+                tr.innerHTML = `
+                    <td><strong>${row.cat}</strong></td>
+                    <td>${row.t}</td>
+                    <td>${row.p}</td>
+                    <td>${row.r}</td>
+                    <td>${pct.toFixed(1)}%</td>
+                `;
+                tbody.appendChild(tr);
+            }
+            const totalTr = document.createElement('tr');
+            totalTr.style.background = '#f0f0f0';
+            totalTr.style.fontWeight = 'bold';
+            totalTr.innerHTML = `
+                <td>TOTAL</td>
+                <td>${total}</td>
+                <td>${totalPending}</td>
+                <td>${totalResolved}</td>
+                <td>100%</td>
+            `;
+            tbody.appendChild(totalTr);
+        }
+
+        function renderUrgencyTable() {
+            const tbody = document.getElementById('urgencyTbody');
+            tbody.innerHTML = '';
+            const levels = ['High', 'Medium', 'Low'];
+            const total = filtered.length;
+            let totalP = 0, totalR = 0;
+            for (const level of levels) {
+                const items = filtered.filter(f => f.urgency === level);
+                const t = items.length;
+                const r = items.filter(f => f.status === 'resolved').length;
+                const p = t - r;
+                totalP += p; totalR += r;
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${level} Priority</strong></td>
+                    <td>${t}</td>
+                    <td>${p}</td>
+                    <td>${r}</td>
+                    <td>${formatPercent(total ? t / total : 0)}</td>
+                `;
+                tbody.appendChild(tr);
+            }
+        }
+
+        function monthKey(dateStr) {
+            const d = new Date(dateStr);
+            return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+        }
+
+        function monthLabel(key) {
+            const [y, m] = key.split('-').map(Number);
+            const date = new Date(y, m-1, 1);
+            return date.toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
+        }
+
+        function renderTrend() {
+            const tbody = document.getElementById('trendTbody');
+            tbody.innerHTML = '';
+            const byMonth = groupBy(filtered, f => monthKey(f.createdAt));
+            const keys = Array.from(byMonth.keys()).sort();
+            for (const key of keys) {
+                const items = byMonth.get(key);
+                const total = items.length;
+                const resolved = items.filter(f => f.status === 'resolved').length;
+                const pending = total - resolved;
+                const rate = total ? Math.round((resolved / total) * 100) : 0;
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${monthLabel(key)}</td>
+                    <td>${total}</td>
+                    <td>${resolved}</td>
+                    <td>${pending}</td>
+                    <td>${rate}%</td>
+                `;
+                tbody.appendChild(tr);
+            }
+        }
+
+        function generateReport() {
+            applyFilters();
+            renderSummary();
+            renderCategoryTable();
+            renderUrgencyTable();
+            renderTrend();
+        }
+
+        function exportReport(format) {
+            if (format !== 'excel') return;
+            // Export filtered rows as CSV
+            const headers = ['ID','Category','Urgency','Status','Created At','Feedback'];
+            const rows = filtered.map(f => [
+                f.id,
+                f.category,
+                f.urgency,
+                f.status,
+                f.createdAtDisplay || new Date(f.createdAt).toLocaleString(),
+                (f.text || '').replace(/\n/g, ' ')
+            ]);
+            const csv = [headers].concat(rows)
+                .map(r => r.map(value => {
+                    const v = String(value ?? '');
+                    if (v.includes(',') || v.includes('"') || v.includes('\n')) {
+                        return '"' + v.replace(/"/g, '""') + '"';
+                    }
+                    return v;
+                }).join(','))
+                .join('\n');
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            const from = document.getElementById('fromDate').value || 'all';
+            const to = document.getElementById('toDate').value || 'all';
+            a.download = `feedback-report_${from}_to_${to}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Initialize defaults and load data
+        document.addEventListener('DOMContentLoaded', async function() {
+            const today = new Date();
+            const toStr = today.toISOString().split('T')[0];
+            const fromDateEl = document.getElementById('fromDate');
+            const toDateEl = document.getElementById('toDate');
+            toDateEl.value = toStr;
+            const thirtyDaysAgo = new Date(today.getTime() - 29*24*60*60*1000);
+            fromDateEl.value = thirtyDaysAgo.toISOString().split('T')[0];
+
+            await loadData();
+            generateReport();
+        });
+    </script>
+</body>
+</html>

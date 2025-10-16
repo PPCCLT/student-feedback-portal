@@ -157,7 +157,7 @@
             <h2>Submit Your Feedback</h2>
             <p>Your feedback is anonymous and helps us improve the quality of education and facilities.</p>
             
-            <form method="POST" action="submit.php">
+            <form id="feedbackForm" method="POST" action="submit.php">
                 <div class="form-group">
                     <label for="category">Category <span class="required">*</span></label>
                     <select name="category" id="category" required>
@@ -198,5 +198,73 @@
     <footer>
         <p>&copy; 2025 Student Feedback Portal. All rights reserved.</p>
     </footer>
+    <script>
+        (function () {
+            const form = document.getElementById('feedbackForm');
+            if (!form) return;
+
+            function generateId() {
+                const rnd = Math.floor(Math.random() * 100000).toString().padStart(5, '0');
+                const ts = Date.now().toString().slice(-4);
+                return `FB-${ts}${rnd}`;
+            }
+
+            function formatDate(date) {
+                const options = { year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' };
+                return new Intl.DateTimeFormat(undefined, options).format(date);
+            }
+
+            form.addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                const category = document.getElementById('category').value;
+                const feedback = document.getElementById('feedback').value.trim();
+                const urgency = document.getElementById('urgency').value;
+
+                if (!category || !feedback || !urgency) {
+                    alert('Please fill all required fields.');
+                    return;
+                }
+
+                const localSubmission = {
+                    id: generateId(),
+                    category: category,
+                    text: feedback,
+                    urgency: urgency,
+                    status: 'pending',
+                    createdAt: new Date().toISOString(),
+                    createdAtDisplay: formatDate(new Date())
+                };
+
+                // Try API first, fallback to localStorage
+                try {
+                    const res = await fetch('http://localhost:3000/api/feedbacks', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ category, text: feedback, urgency })
+                    });
+                    if (!res.ok) throw new Error('API error');
+                    // Optionally mirror to localStorage for offline viewing
+                    const created = await res.json();
+                    try {
+                        const existing = JSON.parse(localStorage.getItem('feedbacks') || '[]');
+                        existing.unshift(created);
+                        localStorage.setItem('feedbacks', JSON.stringify(existing));
+                    } catch (_) { /* ignore */ }
+                } catch (_) {
+                    try {
+                        const existing = JSON.parse(localStorage.getItem('feedbacks') || '[]');
+                        existing.unshift(localSubmission);
+                        localStorage.setItem('feedbacks', JSON.stringify(existing));
+                    } catch (_) {
+                        localStorage.setItem('feedbacks', JSON.stringify([localSubmission]));
+                    }
+                }
+
+                alert('Thank you! Your feedback has been submitted.');
+                window.location.href = 'admin_dashboard.html';
+            });
+        })();
+    </script>
 </body>
 </html>
