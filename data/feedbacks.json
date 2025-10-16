@@ -1,29 +1,24 @@
 [
   {
-    "id": "FB-J1LBzxgM",
-    "category": "Lectures",
-    "text": "abcd",
-    "urgency": "Low",
-    "status": "pending",
-    "createdAt": "2025-10-16T05:55:57.973Z",
-    "createdAtDisplay": "16 Oct 2025, 11:25 am"
-  },
-  {
-    "id": "FB-ezVg3L0n",
-    "category": "Lectures",
-    "text": "abcd",
-    "urgency": "Medium",
-    "status": "pending",
-    "createdAt": "2025-10-16T05:54:36.674Z",
-    "createdAtDisplay": "16 Oct 2025, 11:24 am"
-  },
-  {
-    "id": "FB-bLVZqXss",
-    "category": "Lectures",
-    "text": "lectures are good",
+    "id": "FB-S56qLirw",
+    "category": "Facilities",
+    "text": "Ac is not working",
     "urgency": "Low",
     "status": "resolved",
-    "createdAt": "2025-10-15T11:38:24.986Z",
-    "createdAtDisplay": "15 Oct 2025, 05:08 pm"
+    "createdAt": "2025-10-16T10:17:33.406Z",
+    "createdAtDisplay": "16 Oct 2025, 03:47 pm"
+  },
+  {
+    "id": "FB-_-r2PH0o",
+    "category": "Classrooms",
+    "text": "Classrooms becomes very stuffy sometimes.",
+    "urgency": "Low",
+    "studentName": "Nikita",
+    "rollNo": "2M00012",
+    "department": "Aerospace",
+    "courseNo": "ET645",
+    "status": "pending",
+    "createdAt": "2025-10-16T10:04:43.069Z",
+    "createdAtDisplay": "16 Oct 2025, 03:34 pm"
   }
 ]

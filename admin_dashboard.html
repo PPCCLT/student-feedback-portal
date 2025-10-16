@@ -461,6 +461,19 @@
                     text.className = 'feedback-text';
                     text.textContent = item.text;
 
+                    // Optional student info block (only if any exists)
+                    if (item.studentName || item.rollNo || item.department || item.courseNo) {
+                        const info = document.createElement('p');
+                        info.className = 'feedback-text';
+                        const parts = [];
+                        if (item.studentName) parts.push(`Name: ${item.studentName}`);
+                        if (item.rollNo) parts.push(`Roll no.: ${item.rollNo}`);
+                        if (item.department) parts.push(`Department: ${item.department}`);
+                        if (item.courseNo) parts.push(`Course no.: ${item.courseNo}`);
+                        info.textContent = parts.join('  •  ');
+                        wrapper.appendChild(info);
+                    }
+
                     const footer = document.createElement('div');
                     footer.className = 'feedback-footer';
                     const submitted = document.createElement('span');
