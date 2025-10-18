@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Admin Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .navbar {
+            width: 100%;
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #1e5ba8;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.3s;
+            font-size: 14px;
+        }
+
+        .nav-links a:hover {
+            opacity: 0.8;
+        }
+
+        .btn-logout {
+            background: white;
+            color: #1e5ba8;
+            padding: 8px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .dashboard-header {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+
+        .dashboard-header h1 {
+            color: #1e5ba8;
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .dashboard-header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .dept-badge {
+            display: inline-block;
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            font-size: 32px;
+            color: #1e5ba8;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .filters {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filters label {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .filters select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .feedback-list {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .feedback-item {
+            padding: 25px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background 0.3s;
+        }
+
+        .feedback-item:hover {
+            background: #fafafa;
+        }
+
+        .feedback-item:last-child {
+            border-bottom: none;
+        }
+
+        .feedback-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .urgency-badge {
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .urgency-low {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .urgency-medium {
+            background: #fff3e0;
+            color: #ef6c00;
+        }
+
+        .urgency-high {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .feedback-meta {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .feedback-text {
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .feedback-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: #999;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-action {
+            padding: 6px 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: opacity 0.3s;
+            font-weight: 600;
+        }
+
+        .btn-resolve {
+            background: #4caf50;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-action:hover {
+            opacity: 0.8;
+        }
+
+        .status-resolved {
+            background: #f1f8f4;
+            border-left: 4px solid #4caf50;
+        }
+
+        .resolved-badge {
+            background: #4caf50;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        footer {
+            padding: 30px 5%;
+            background: #1e5ba8;
+            text-align: center;
+            color: white;
+            margin-top: 50px;
+        }
+
+        footer p {
+            font-size: 14px;
+        }
+
+        .subcategory-highlight {
+            background: #f0f8f0;
+            padding: 8px 12px;
+            border-left: 4px solid #2e7d32;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-size: 13px;
+            color: #2e7d32;
+            font-weight: 600;
+        }
+
+        .suggestions-box {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 12px;
+            margin: 12px 0;
+        }
+
+        .suggestions-box h4 {
+            color: #2e7d32;
+            font-size: 13px;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .suggestions-box p {
+            color: #555;
+            font-size: 13px;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">📚 Academic Admin Dashboard</div>
+        <div class="nav-links">
+            <a href="admin_login.html">Switch Department</a>
+            <button class="btn-logout" onclick="logout()">Logout</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="dashboard-header">
+            <h1>Academic Feedback Dashboard <span class="dept-badge">ACADEMIC DEPT</span></h1>
+            <p>Manage and review all lectures and academic-related feedback submissions</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3 id="stat-total">0</h3>
+                <p>Total Academic Feedback</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="stat-pending">0</h3>
+                <p>Pending Review</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="stat-resolved">0</h3>
+                <p>Resolved</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="stat-high">0</h3>
+                <p>High Priority</p>
+            </div>
+        </div>
+
+        <div class="filters">
+            <label>Filter by:</label>
+            <select onchange="filterUrgency(this.value)">
+                <option value="all">All Urgency</option>
+                <option value="High">High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+            </select>
+
+            <select onchange="filterStatus(this.value)">
+                <option value="all">All Status</option>
+                <option value="pending">Pending</option>
+                <option value="resolved">Resolved</option>
+            </select>
+
+            <select onchange="filterSubcategory(this.value)">
+                <option value="all">All Subcategories</option>
+                <option value="Teaching Clarity">Teaching Clarity</option>
+                <option value="Course Content Quality">Course Content</option>
+                <option value="Evaluation & Assessment">Evaluation</option>
+                <option value="Pace of Teaching">Teaching Pace</option>
+                <option value="Use of Teaching Aids / Technology">Teaching Aids</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+
+        <div id="feedbackList" class="feedback-list"></div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Student Feedback Portal - Academic Department. All rights reserved.</p>
+    </footer>
+
+    <script>
+        (function () {
+            const listEl = document.getElementById('feedbackList');
+            const statTotal = document.getElementById('stat-total');
+            const statPending = document.getElementById('stat-pending');
+            const statResolved = document.getElementById('stat-resolved');
+            const statHigh = document.getElementById('stat-high');
+
+            let feedbacks = [];
+            let activeFilters = { urgency: 'all', status: 'all', subcategory: 'all' };
+
+            // Check if user is logged in as lectures admin
+            const adminDept = sessionStorage.getItem('adminDept');
+            if (adminDept !== 'lectures') {
+                alert('Access denied. Please login as Academic Admin.');
+                window.location.href = 'admin_login.html';
+                return;
+            }
+
+            async function load() {
+                try {
+                    const res = await fetch('http://localhost:3000/api/feedbacks');
+                    if (!res.ok) throw new Error('API error');
+                    const allFeedbacks = await res.json();
+                    // Filter only lectures feedback
+                    feedbacks = allFeedbacks.filter(f => f.category === 'Lectures');
+                    localStorage.setItem('feedbacks', JSON.stringify(allFeedbacks));
+                } catch (_) {
+                    try {
+                        const allFeedbacks = JSON.parse(localStorage.getItem('feedbacks') || '[]');
+                        feedbacks = allFeedbacks.filter(f => f.category === 'Lectures');
+                    } catch (_) {
+                        feedbacks = [];
+                    }
+                }
+            }
+
+            function save() {
+                const allFeedbacks = JSON.parse(localStorage.getItem('feedbacks') || '[]');
+                localStorage.setItem('feedbacks', JSON.stringify(allFeedbacks));
+            }
+
+            function urgencyClass(u) {
+                if (u === 'High') return 'urgency-high';
+                if (u === 'Medium') return 'urgency-medium';
+                return 'urgency-low';
+            }
+
+            function matchesFilters(item) {
+                if (activeFilters.urgency !== 'all' && item.urgency !== activeFilters.urgency) return false;
+                if (activeFilters.status !== 'all' && item.status !== activeFilters.status) return false;
+                if (activeFilters.subcategory !== 'all' && item.subcategory !== activeFilters.subcategory) return false;
+                return true;
+            }
+
+            function renderStats() {
+                const total = feedbacks.length;
+                const resolved = feedbacks.filter(f => f.status === 'resolved').length;
+                const pending = total - resolved;
+                const high = feedbacks.filter(f => f.urgency === 'High').length;
+                statTotal.textContent = total;
+                statResolved.textContent = resolved;
+                statPending.textContent = pending;
+                statHigh.textContent = high;
+            }
+
+            function render() {
+                listEl.innerHTML = '';
+                const items = feedbacks.filter(matchesFilters);
+                
+                if (items.length === 0) {
+                    const empty = document.createElement('div');
+                    empty.className = 'feedback-item';
+                    empty.innerHTML = '<p class="feedback-text">No academic feedback found.</p>';
+                    listEl.appendChild(empty);
+                    renderStats();
+                    return;
+                }
+
+                items.forEach(item => {
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'feedback-item' + (item.status === 'resolved' ? ' status-resolved' : '');
+                    wrapper.dataset.id = item.id;
+
+                    const header = document.createElement('div');
+                    header.className = 'feedback-header';
+
+                    const meta = document.createElement('div');
+                    meta.className = 'feedback-meta';
+                    
+                    const cat = document.createElement('span');
+                    cat.className = 'category-badge';
+                    cat.textContent = item.category;
+                    
+                    const urg = document.createElement('span');
+                    urg.className = 'urgency-badge ' + urgencyClass(item.urgency);
+                    urg.textContent = item.urgency + ' Priority';
+                    
+                    meta.appendChild(cat);
+                    meta.appendChild(urg);
+                    
+                    if (item.status === 'resolved') {
+                        const res = document.createElement('span');
+                        res.className = 'resolved-badge';
+                        res.textContent = '✓ Resolved';
+                        meta.appendChild(res);
+                    }
+
+                    const actions = document.createElement('div');
+                    actions.className = 'action-buttons';
+                    if (item.status !== 'resolved') {
+                        const btnResolve = document.createElement('button');
+                        btnResolve.className = 'btn-action btn-resolve';
+                        btnResolve.textContent = 'Mark Resolved';
+                        btnResolve.addEventListener('click', () => onResolve(item.id));
+                        actions.appendChild(btnResolve);
+                    }
+                    const btnDelete = document.createElement('button');
+                    btnDelete.className = 'btn-action btn-delete';
+                    btnDelete.textContent = 'Delete';
+                    btnDelete.addEventListener('click', () => onDelete(item.id));
+                    actions.appendChild(btnDelete);
+
+                    header.appendChild(meta);
+                    header.appendChild(actions);
+
+                    // Subcategory highlight
+                    if (item.subcategory) {
+                        const subcategoryEl = document.createElement('div');
+                        subcategoryEl.className = 'subcategory-highlight';
+                        subcategoryEl.textContent = `📚 ${item.subcategory}`;
+                        wrapper.appendChild(subcategoryEl);
+                    }
+
+                    const text = document.createElement('p');
+                    text.className = 'feedback-text';
+                    text.textContent = item.text;
+
+                    // Suggestions display
+                    if (item.suggestions && item.suggestions.trim()) {
+                        const suggestionsEl = document.createElement('div');
+                        suggestionsEl.className = 'suggestions-box';
+                        suggestionsEl.innerHTML = `
+                            <h4>💡 Student Suggestions:</h4>
+                            <p>${item.suggestions}</p>
+                        `;
+                        wrapper.appendChild(suggestionsEl);
+                    }
+
+                    // Student info
+                    if (item.studentName || item.rollNo || item.department || item.courseNo) {
+                        const info = document.createElement('div');
+                        info.style.marginTop = '12px';
+                        info.style.padding = '10px';
+                        info.style.backgroundColor = '#fafafa';
+                        info.style.borderRadius = '4px';
+                        info.style.fontSize = '13px';
+                        info.style.color = '#666';
+                        const parts = [];
+                        if (item.studentName) parts.push(`<strong>Name:</strong> ${item.studentName}`);
+                        if (item.rollNo) parts.push(`<strong>Roll No:</strong> ${item.rollNo}`);
+                        if (item.department) parts.push(`<strong>Department:</strong> ${item.department}`);
+                        if (item.courseNo) parts.push(`<strong>Course:</strong> ${item.courseNo}`);
+                        info.innerHTML = parts.join(' &nbsp;•&nbsp; ');
+                        wrapper.appendChild(info);
+                    }
+
+                    const footer = document.createElement('div');
+                    footer.className = 'feedback-footer';
+                    const submitted = document.createElement('span');
+                    submitted.textContent = 'Submitted: ' + (item.createdAtDisplay || new Date(item.createdAt).toLocaleString());
+                    const idSpan = document.createElement('span');
+                    idSpan.textContent = 'ID: #' + item.id;
+                    footer.appendChild(submitted);
+                    footer.appendChild(idSpan);
+
+                    wrapper.appendChild(header);
+                    wrapper.appendChild(text);
+                    wrapper.appendChild(footer);
+                    listEl.appendChild(wrapper);
+                });
+
+                renderStats();
+            }
+
+            async function onResolve(id) {
+                try {
+                    const res = await fetch(`http://localhost:3000/api/feedbacks/${encodeURIComponent(id)}/resolve`, {
+                        method: 'PATCH'
+                    });
+                    if (!res.ok) throw new Error('API error');
+                    const updated = await res.json();
+                    const idx = feedbacks.findIndex(f => f.id === id);
+                    if (idx !== -1) feedbacks[idx] = updated;
+                    save();
+                    render();
+                    alert('Feedback marked as resolved!');
+                } catch (_) {
+                    const idx = feedbacks.findIndex(f => f.id === id);
+                    if (idx === -1) return;
+                    feedbacks[idx].status = 'resolved';
+                    save();
+                    render();
+                    alert('Feedback marked as resolved (offline)');
+                }
+            }
+
+            async function onDelete(id) {
+                if (!confirm('Are you sure you want to delete this feedback?')) return;
+                try {
+                    const res = await fetch(`http://localhost:3000/api/feedbacks/${encodeURIComponent(id)}`, {
+                        method: 'DELETE'
+                    });
+                    if (!res.ok && res.status !== 204) throw new Error('API error');
+                } catch (_) {}
+                feedbacks = feedbacks.filter(f => f.id !== id);
+                save();
+                render();
+            }
+
+            window.filterUrgency = function (urgency) {
+                activeFilters.urgency = urgency;
+                render();
+            };
+
+            window.filterStatus = function (status) {
+                activeFilters.status = status;
+                render();
+            };
+
+            window.filterSubcategory = function (subcategory) {
+                activeFilters.subcategory = subcategory;
+                render();
+            };
+
+            window.logout = function() {
+                sessionStorage.clear();
+                window.location.href = 'admin_login.html';
+            };
+
+            (async function init() {
+                await load();
+                render();
+            })();
+        })();
+    </script>
+</body>
+</html>

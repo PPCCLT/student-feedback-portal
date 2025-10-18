@@ -280,17 +280,17 @@
 </head>
 <body>
     <nav class="navbar">
-        <div class="logo">Admin Dashboard</div>
+        <div class="logo">🔧 Super Admin Dashboard</div>
         <div class="nav-links">
-            <a href="index.html">Home</a>
-            <button class="btn-logout" onclick="alert('Logout functionality')">Logout</button>
+            <a href="admin_login.html">Switch Department</a>
+            <button class="btn-logout" onclick="logout()">Logout</button>
         </div>
     </nav>
 
     <div class="container">
         <div class="dashboard-header">
-            <h1>Feedback Dashboard</h1>
-            <p>Manage and review all student feedback submissions</p>
+            <h1>Super Admin Dashboard <span style="display: inline-block; background: #e3f2fd; color: #1e5ba8; padding: 5px 12px; border-radius: 15px; font-size: 12px; font-weight: 600; margin-left: 10px;">SUPER ADMIN</span></h1>
+            <p>Manage and review all student feedback submissions across all departments</p>
         </div>
 
         <div class="stats-grid">
@@ -354,6 +354,14 @@
 
             let feedbacks = [];
             let activeFilters = { category: 'all', urgency: 'all', status: 'all' };
+
+            // Check if user is logged in as super admin
+            const adminDept = sessionStorage.getItem('adminDept');
+            if (adminDept !== 'super') {
+                alert('Access denied. Please login as Super Admin.');
+                window.location.href = 'admin_login.html';
+                return;
+            }
 
             async function load() {
                 // Try API first
@@ -590,6 +598,11 @@
             window.filterStatus = function (status) {
                 activeFilters.status = status;
                 render();
+            };
+
+            window.logout = function() {
+                sessionStorage.clear();
+                window.location.href = 'admin_login.html';
             };
 
             (async function init() {

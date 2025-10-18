@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Feedback</title>
+    <title>General Admin Dashboard</title>
     <style>
         * {
             margin: 0;
@@ -86,6 +86,17 @@
         .dashboard-header p {
             color: #666;
             font-size: 14px;
+        }
+
+        .dept-badge {
+            display: inline-block;
+            background: #e0f2f1;
+            color: #00695c;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
         }
 
         .stats-grid {
@@ -174,8 +185,8 @@
             border-radius: 15px;
             font-size: 12px;
             font-weight: 600;
-            background: #e3f2fd;
-            color: #1e5ba8;
+            background: #e0f2f1;
+            color: #00695c;
         }
 
         .urgency-badge {
@@ -276,27 +287,59 @@
         footer p {
             font-size: 14px;
         }
+
+        .subcategory-highlight {
+            background: #f1f8f5;
+            padding: 8px 12px;
+            border-left: 4px solid #00695c;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-size: 13px;
+            color: #00695c;
+            font-weight: 600;
+        }
+
+        .suggestions-box {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 12px;
+            margin: 12px 0;
+        }
+
+        .suggestions-box h4 {
+            color: #00695c;
+            font-size: 13px;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .suggestions-box p {
+            color: #555;
+            font-size: 13px;
+            margin: 0;
+        }
     </style>
 </head>
 <body>
     <nav class="navbar">
-        <div class="logo">Admin Dashboard</div>
+        <div class="logo">📋 General Admin Dashboard</div>
         <div class="nav-links">
-            <a href="index.html">Home</a>
-            <button class="btn-logout" onclick="alert('Logout functionality')">Logout</button>
+            <a href="admin_login.html">Switch Department</a>
+            <button class="btn-logout" onclick="logout()">Logout</button>
         </div>
     </nav>
 
     <div class="container">
         <div class="dashboard-header">
-            <h1>Feedback Dashboard</h1>
-            <p>Manage and review all student feedback submissions</p>
+            <h1>General Feedback Dashboard <span class="dept-badge">GENERAL ADMIN</span></h1>
+            <p>Manage and review all general and miscellaneous feedback submissions</p>
         </div>
 
         <div class="stats-grid">
             <div class="stat-card">
                 <h3 id="stat-total">0</h3>
-                <p>Total Feedback</p>
+                <p>Total General Feedback</p>
             </div>
             <div class="stat-card">
                 <h3 id="stat-pending">0</h3>
@@ -314,15 +357,6 @@
 
         <div class="filters">
             <label>Filter by:</label>
-            <select onchange="filterFeedback(this.value)">
-                <option value="all">All Categories</option>
-                <option value="Lectures">Lectures</option>
-                <option value="Classrooms">Classrooms</option>
-                <option value="Facilities">Facilities</option>
-                <option value="Events">Events</option>
-                <option value="Other">Other</option>
-            </select>
-
             <select onchange="filterUrgency(this.value)">
                 <option value="all">All Urgency</option>
                 <option value="High">High</option>
@@ -335,13 +369,22 @@
                 <option value="pending">Pending</option>
                 <option value="resolved">Resolved</option>
             </select>
+
+            <select onchange="filterSubcategory(this.value)">
+                <option value="all">All Subcategories</option>
+                <option value="General Feedback">General Feedback</option>
+                <option value="Suggestions">Suggestions</option>
+                <option value="Complaints">Complaints</option>
+                <option value="Compliments">Compliments</option>
+                <option value="Miscellaneous">Miscellaneous</option>
+            </select>
         </div>
 
         <div id="feedbackList" class="feedback-list"></div>
     </div>
 
     <footer>
-        <p>&copy; 2025 Student Feedback Portal. All rights reserved.</p>
+        <p>&copy; 2025 Student Feedback Portal - General Administration. All rights reserved.</p>
     </footer>
 
     <script>
@@ -353,21 +396,28 @@
             const statHigh = document.getElementById('stat-high');
 
             let feedbacks = [];
-            let activeFilters = { category: 'all', urgency: 'all', status: 'all' };
+            let activeFilters = { urgency: 'all', status: 'all', subcategory: 'all' };
+
+            // Check if user is logged in as general admin
+            const adminDept = sessionStorage.getItem('adminDept');
+            if (adminDept !== 'general') {
+                alert('Access denied. Please login as General Admin.');
+                window.location.href = 'admin_login.html';
+                return;
+            }
 
             async function load() {
-                // Try API first
                 try {
                     const res = await fetch('http://localhost:3000/api/feedbacks');
                     if (!res.ok) throw new Error('API error');
-                    feedbacks = await res.json();
-                    // Mirror to localStorage for offline viewing
-                    try { localStorage.setItem('feedbacks', JSON.stringify(feedbacks)); } catch (_) {}
-                    return;
+                    const allFeedbacks = await res.json();
+                    // Filter only other feedback
+                    feedbacks = allFeedbacks.filter(f => f.category === 'Other');
+                    localStorage.setItem('feedbacks', JSON.stringify(allFeedbacks));
                 } catch (_) {
-                    // Fallback to localStorage
                     try {
-                        feedbacks = JSON.parse(localStorage.getItem('feedbacks') || '[]');
+                        const allFeedbacks = JSON.parse(localStorage.getItem('feedbacks') || '[]');
+                        feedbacks = allFeedbacks.filter(f => f.category === 'Other');
                     } catch (_) {
                         feedbacks = [];
                     }
@@ -375,7 +425,8 @@
             }
 
             function save() {
-                localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
+                const allFeedbacks = JSON.parse(localStorage.getItem('feedbacks') || '[]');
+                localStorage.setItem('feedbacks', JSON.stringify(allFeedbacks));
             }
 
             function urgencyClass(u) {
@@ -385,9 +436,9 @@
             }
 
             function matchesFilters(item) {
-                if (activeFilters.category !== 'all' && item.category !== activeFilters.category) return false;
                 if (activeFilters.urgency !== 'all' && item.urgency !== activeFilters.urgency) return false;
                 if (activeFilters.status !== 'all' && item.status !== activeFilters.status) return false;
+                if (activeFilters.subcategory !== 'all' && item.subcategory !== activeFilters.subcategory) return false;
                 return true;
             }
 
@@ -405,10 +456,11 @@
             function render() {
                 listEl.innerHTML = '';
                 const items = feedbacks.filter(matchesFilters);
+                
                 if (items.length === 0) {
                     const empty = document.createElement('div');
                     empty.className = 'feedback-item';
-                    empty.innerHTML = '<p class="feedback-text">No feedback found.</p>';
+                    empty.innerHTML = '<p class="feedback-text">No general feedback found.</p>';
                     listEl.appendChild(empty);
                     renderStats();
                     return;
@@ -424,14 +476,18 @@
 
                     const meta = document.createElement('div');
                     meta.className = 'feedback-meta';
+                    
                     const cat = document.createElement('span');
                     cat.className = 'category-badge';
                     cat.textContent = item.category;
+                    
                     const urg = document.createElement('span');
                     urg.className = 'urgency-badge ' + urgencyClass(item.urgency);
-                    urg.textContent = (item.urgency === 'High' ? 'High' : item.urgency) + ' Priority';
+                    urg.textContent = item.urgency + ' Priority';
+                    
                     meta.appendChild(cat);
                     meta.appendChild(urg);
+                    
                     if (item.status === 'resolved') {
                         const res = document.createElement('span');
                         res.className = 'resolved-badge';
@@ -457,13 +513,11 @@
                     header.appendChild(meta);
                     header.appendChild(actions);
 
-                    // Subcategory display
+                    // Subcategory highlight
                     if (item.subcategory) {
-                        const subcategoryEl = document.createElement('p');
-                        subcategoryEl.className = 'feedback-text';
-                        subcategoryEl.style.fontWeight = '600';
-                        subcategoryEl.style.color = '#1e5ba8';
-                        subcategoryEl.textContent = `Subcategory: ${item.subcategory}`;
+                        const subcategoryEl = document.createElement('div');
+                        subcategoryEl.className = 'subcategory-highlight';
+                        subcategoryEl.textContent = `📋 ${item.subcategory}`;
                         wrapper.appendChild(subcategoryEl);
                     }
 
@@ -471,41 +525,32 @@
                     text.className = 'feedback-text';
                     text.textContent = item.text;
 
-                    // Suggestions display (if provided)
+                    // Suggestions display
                     if (item.suggestions && item.suggestions.trim()) {
                         const suggestionsEl = document.createElement('div');
-                        suggestionsEl.style.marginTop = '12px';
-                        suggestionsEl.style.padding = '10px';
-                        suggestionsEl.style.backgroundColor = '#f8f9fa';
-                        suggestionsEl.style.borderLeft = '4px solid #1e5ba8';
-                        suggestionsEl.style.borderRadius = '4px';
-                        
-                        const suggestionsLabel = document.createElement('p');
-                        suggestionsLabel.style.fontWeight = '600';
-                        suggestionsLabel.style.color = '#1e5ba8';
-                        suggestionsLabel.style.marginBottom = '5px';
-                        suggestionsLabel.textContent = 'Suggestions:';
-                        suggestionsEl.appendChild(suggestionsLabel);
-                        
-                        const suggestionsText = document.createElement('p');
-                        suggestionsText.className = 'feedback-text';
-                        suggestionsText.style.margin = '0';
-                        suggestionsText.textContent = item.suggestions;
-                        suggestionsEl.appendChild(suggestionsText);
-                        
+                        suggestionsEl.className = 'suggestions-box';
+                        suggestionsEl.innerHTML = `
+                            <h4>💡 Student Suggestions:</h4>
+                            <p>${item.suggestions}</p>
+                        `;
                         wrapper.appendChild(suggestionsEl);
                     }
 
-                    // Optional student info block (only if any exists)
+                    // Student info
                     if (item.studentName || item.rollNo || item.department || item.courseNo) {
-                        const info = document.createElement('p');
-                        info.className = 'feedback-text';
+                        const info = document.createElement('div');
+                        info.style.marginTop = '12px';
+                        info.style.padding = '10px';
+                        info.style.backgroundColor = '#fafafa';
+                        info.style.borderRadius = '4px';
+                        info.style.fontSize = '13px';
+                        info.style.color = '#666';
                         const parts = [];
-                        if (item.studentName) parts.push(`Name: ${item.studentName}`);
-                        if (item.rollNo) parts.push(`Roll no.: ${item.rollNo}`);
-                        if (item.department) parts.push(`Department: ${item.department}`);
-                        if (item.courseNo) parts.push(`Course no.: ${item.courseNo}`);
-                        info.textContent = parts.join('  •  ');
+                        if (item.studentName) parts.push(`<strong>Name:</strong> ${item.studentName}`);
+                        if (item.rollNo) parts.push(`<strong>Roll No:</strong> ${item.rollNo}`);
+                        if (item.department) parts.push(`<strong>Department:</strong> ${item.department}`);
+                        if (item.courseNo) parts.push(`<strong>Course:</strong> ${item.courseNo}`);
+                        info.innerHTML = parts.join(' &nbsp;•&nbsp; ');
                         wrapper.appendChild(info);
                     }
 
@@ -528,21 +573,18 @@
             }
 
             async function onResolve(id) {
-                // Try API first
                 try {
                     const res = await fetch(`http://localhost:3000/api/feedbacks/${encodeURIComponent(id)}/resolve`, {
                         method: 'PATCH'
                     });
                     if (!res.ok) throw new Error('API error');
                     const updated = await res.json();
-                    const idxApi = feedbacks.findIndex(f => f.id === id);
-                    if (idxApi !== -1) feedbacks[idxApi] = updated;
+                    const idx = feedbacks.findIndex(f => f.id === id);
+                    if (idx !== -1) feedbacks[idx] = updated;
                     save();
                     render();
                     alert('Feedback marked as resolved!');
-                    return;
                 } catch (_) {
-                    // Fallback: update local copy only
                     const idx = feedbacks.findIndex(f => f.id === id);
                     if (idx === -1) return;
                     feedbacks[idx].status = 'resolved';
@@ -554,24 +596,16 @@
 
             async function onDelete(id) {
                 if (!confirm('Are you sure you want to delete this feedback?')) return;
-                // Try API first
                 try {
                     const res = await fetch(`http://localhost:3000/api/feedbacks/${encodeURIComponent(id)}`, {
                         method: 'DELETE'
                     });
                     if (!res.ok && res.status !== 204) throw new Error('API error');
-                } catch (_) {
-                    // ignore and proceed to local delete
-                }
+                } catch (_) {}
                 feedbacks = feedbacks.filter(f => f.id !== id);
                 save();
                 render();
             }
-
-            window.filterFeedback = function (category) {
-                activeFilters.category = category;
-                render();
-            };
 
             window.filterUrgency = function (urgency) {
                 activeFilters.urgency = urgency;
@@ -581,6 +615,16 @@
             window.filterStatus = function (status) {
                 activeFilters.status = status;
                 render();
+            };
+
+            window.filterSubcategory = function (subcategory) {
+                activeFilters.subcategory = subcategory;
+                render();
+            };
+
+            window.logout = function() {
+                sessionStorage.clear();
+                window.location.href = 'admin_login.html';
             };
 
             (async function init() {

@@ -34,6 +34,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Serve static files (HTML, CSS, JS)
+app.use(express.static(__dirname));
+
 // Global process-level error handlers to avoid silent crashes
 process.on('uncaughtException', (err) => {
   console.error('[uncaughtException]', err);
