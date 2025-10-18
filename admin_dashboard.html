@@ -457,25 +457,71 @@
                     header.appendChild(meta);
                     header.appendChild(actions);
 
+                    wrapper.appendChild(header);
+
+                    // Subcategory display (right after header, as additional context)
+                    if (item.subcategory) {
+                        const subcategoryEl = document.createElement('div');
+                        subcategoryEl.style.marginBottom = '10px';
+                        subcategoryEl.style.fontSize = '13px';
+                        subcategoryEl.style.color = '#666';
+                        subcategoryEl.innerHTML = `<strong style="color: #1e5ba8;">Subcategory:</strong> ${item.subcategory}`;
+                        wrapper.appendChild(subcategoryEl);
+                    }
+
                     const text = document.createElement('p');
                     text.className = 'feedback-text';
+                    text.style.marginTop = '12px';
                     text.textContent = item.text;
+                    wrapper.appendChild(text);
+
+                    // Suggestions display (if provided)
+                    if (item.suggestions && item.suggestions.trim()) {
+                        const suggestionsEl = document.createElement('div');
+                        suggestionsEl.style.marginTop = '12px';
+                        suggestionsEl.style.padding = '12px';
+                        suggestionsEl.style.backgroundColor = '#f0f7ff';
+                        suggestionsEl.style.borderLeft = '4px solid #1e5ba8';
+                        suggestionsEl.style.borderRadius = '4px';
+                        
+                        const suggestionsLabel = document.createElement('p');
+                        suggestionsLabel.style.fontWeight = '600';
+                        suggestionsLabel.style.color = '#1e5ba8';
+                        suggestionsLabel.style.marginBottom = '6px';
+                        suggestionsLabel.style.fontSize = '13px';
+                        suggestionsLabel.textContent = '💡 Suggestions:';
+                        suggestionsEl.appendChild(suggestionsLabel);
+                        
+                        const suggestionsText = document.createElement('p');
+                        suggestionsText.className = 'feedback-text';
+                        suggestionsText.style.margin = '0';
+                        suggestionsText.textContent = item.suggestions;
+                        suggestionsEl.appendChild(suggestionsText);
+                        
+                        wrapper.appendChild(suggestionsEl);
+                    }
 
                     // Optional student info block (only if any exists)
                     if (item.studentName || item.rollNo || item.department || item.courseNo) {
-                        const info = document.createElement('p');
-                        info.className = 'feedback-text';
+                        const info = document.createElement('div');
+                        info.style.marginTop = '12px';
+                        info.style.padding = '10px';
+                        info.style.backgroundColor = '#fafafa';
+                        info.style.borderRadius = '4px';
+                        info.style.fontSize = '13px';
+                        info.style.color = '#666';
                         const parts = [];
-                        if (item.studentName) parts.push(`Name: ${item.studentName}`);
-                        if (item.rollNo) parts.push(`Roll no.: ${item.rollNo}`);
-                        if (item.department) parts.push(`Department: ${item.department}`);
-                        if (item.courseNo) parts.push(`Course no.: ${item.courseNo}`);
-                        info.textContent = parts.join('  •  ');
+                        if (item.studentName) parts.push(`<strong>Name:</strong> ${item.studentName}`);
+                        if (item.rollNo) parts.push(`<strong>Roll No:</strong> ${item.rollNo}`);
+                        if (item.department) parts.push(`<strong>Department:</strong> ${item.department}`);
+                        if (item.courseNo) parts.push(`<strong>Course:</strong> ${item.courseNo}`);
+                        info.innerHTML = parts.join(' &nbsp;•&nbsp; ');
                         wrapper.appendChild(info);
                     }
 
                     const footer = document.createElement('div');
                     footer.className = 'feedback-footer';
+                    footer.style.marginTop = '15px';
                     const submitted = document.createElement('span');
                     submitted.textContent = 'Submitted: ' + (item.createdAtDisplay || new Date(item.createdAt).toLocaleString());
                     const idSpan = document.createElement('span');
@@ -483,8 +529,6 @@
                     footer.appendChild(submitted);
                     footer.appendChild(idSpan);
 
-                    wrapper.appendChild(header);
-                    wrapper.appendChild(text);
                     wrapper.appendChild(footer);
                     listEl.appendChild(wrapper);
                 });

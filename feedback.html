@@ -192,12 +192,28 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="subcategory">Subcategory / Feedback Title <span class="required">*</span></label>
+                    <select name="subcategory" id="subcategory" required disabled>
+                        <option value="">-- Select Category First --</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
                     <label for="feedback">Feedback <span class="required">*</span></label>
                     <textarea 
                         name="feedback" 
                         id="feedback" 
                         placeholder="Please share your detailed feedback here..."
                         required
+                    ></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="suggestions">Suggestions</label>
+                    <textarea 
+                        name="suggestions" 
+                        id="suggestions" 
+                        placeholder="Any suggestions for improvement? (Optional)"
                     ></textarea>
                 </div>
 
@@ -224,6 +240,91 @@
             const form = document.getElementById('feedbackForm');
             if (!form) return;
 
+            // Define subcategories for each main category
+            const subcategories = {
+                'Lectures': [
+                    'Teaching Clarity',
+                    'Course Content Quality',
+                    'Evaluation & Assessment ',
+                    'Pace of Teacing',
+                    'Use of Teaching Aids / Technology',
+                    'Other'
+                ],
+                'Classrooms': [
+                    'Seating and Comfort',
+                    'Lighting and Ventilation',
+                    'Audio-Visual Equipment',
+                    'Classroom Availability / Scheduling Issues',
+                    'Other'
+                ],
+                'Facilities': [
+                    'Wi-Fi & Internet Access',
+                    'Library Resources',
+                    'Laboratory Equipment & Maintenance',
+                    'Computer Labs',
+                    'Hostel / Accommodation',
+                    'Sports Facilities',
+                    'Cleanliness & Hygiene',
+                    'Other'
+                ],
+                'Events': [
+                    'Event Organization & Coordination',
+                    'Timing / Scheduling',
+                    'Relevance to Academics',
+                    'Participation & Opportunities',
+                    'Communication / Information Dissemination',
+                    'Other'
+                ],
+                'Other': [
+                    'General Feedback',
+                    'Suggestions',
+                    'Complaints',
+                    'Compliments',
+                    'Miscellaneous'
+                ]
+            };
+
+            // Get form elements
+            const categorySelect = document.getElementById('category');
+            const subcategorySelect = document.getElementById('subcategory');
+
+            // Function to update subcategory options
+            function updateSubcategories() {
+                const selectedCategory = categorySelect.value;
+                
+                // Clear existing options
+                subcategorySelect.innerHTML = '';
+                
+                if (selectedCategory && subcategories[selectedCategory]) {
+                    // Enable subcategory select
+                    subcategorySelect.disabled = false;
+                    
+                    // Add default option
+                    const defaultOption = document.createElement('option');
+                    defaultOption.value = '';
+                    defaultOption.textContent = '-- Select Subcategory --';
+                    subcategorySelect.appendChild(defaultOption);
+                    
+                    // Add subcategory options
+                    subcategories[selectedCategory].forEach(subcategory => {
+                        const option = document.createElement('option');
+                        option.value = subcategory;
+                        option.textContent = subcategory;
+                        subcategorySelect.appendChild(option);
+                    });
+                } else {
+                    // Disable subcategory select
+                    subcategorySelect.disabled = true;
+                    const defaultOption = document.createElement('option');
+                    defaultOption.value = '';
+                    defaultOption.textContent = '-- Select Category First --';
+                    subcategorySelect.appendChild(defaultOption);
+                }
+            }
+
+            // Add event listener for category change
+            categorySelect.addEventListener('change', updateSubcategories);
+
             function generateId() {
                 const rnd = Math.floor(Math.random() * 100000).toString().padStart(5, '0');
                 const ts = Date.now().toString().slice(-4);
@@ -239,14 +340,16 @@
                 e.preventDefault();
 
                 const category = document.getElementById('category').value;
+                const subcategory = document.getElementById('subcategory').value;
                 const feedback = document.getElementById('feedback').value.trim();
+                const suggestions = (document.getElementById('suggestions')?.value || '').trim();
                 const urgency = document.getElementById('urgency').value;
                 const studentName = (document.getElementById('studentName')?.value || '').trim();
                 const rollNo = (document.getElementById('rollNo')?.value || '').trim();
                 const department = (document.getElementById('department')?.value || '').trim();
                 const courseNo = (document.getElementById('courseNo')?.value || '').trim();
 
-                if (!category || !feedback || !urgency) {
+                if (!category || !subcategory || !feedback || !urgency) {
                     alert('Please fill all required fields.');
                     return;
                 }
@@ -254,7 +357,9 @@
                 const localSubmission = {
                     id: generateId(),
                     category: category,
+                    subcategory: subcategory,
                     text: feedback,
+                    suggestions: suggestions,
                     urgency: urgency,
                     studentName: studentName,
                     rollNo: rollNo,
@@ -272,7 +377,9 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                             category,
+                            subcategory,
                             text: feedback,
+                            suggestions,
                             urgency,
                             studentName,
                             rollNo,
@@ -302,6 +409,6 @@
                 window.location.href = 'index.html';
             });
         })();
-    </script>
+    </script> 
 </body>
 </html>
