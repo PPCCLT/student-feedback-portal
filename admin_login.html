@@ -13,93 +13,197 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1e5ba8 0%, #164a8a 100%);
+            background: #f5f7fa;
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             color: #333;
         }
 
-        .login-container {
-            background: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            width: 100%;
-            max-width: 500px;
-            margin: 20px;
+        /* Navbar matching your website */
+        .navbar {
+            background: #1e5ba8;
+            padding: 15px 5%;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .navbar-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            color: white;
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 30px;
+            font-size: 14px;
+            transition: opacity 0.3s;
+        }
+
+        .nav-links a:hover {
+            opacity: 0.8;
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
         }
 
         .login-header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 50px;
         }
 
         .login-header h1 {
             color: #1e5ba8;
-            font-size: 28px;
+            font-size: 32px;
             margin-bottom: 10px;
             font-weight: 600;
         }
 
         .login-header p {
             color: #666;
-            font-size: 14px;
+            font-size: 16px;
         }
 
+        /* Department Cards Grid */
         .department-grid {
             display: grid;
-            grid-template-columns: 1fr;
-            gap: 15px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
         }
 
         .department-card {
-            background: #f8f9fa;
+            background: white;
             border: 2px solid #e9ecef;
-            border-radius: 8px;
-            padding: 20px;
+            border-radius: 12px;
+            padding: 25px;
             cursor: pointer;
             transition: all 0.3s ease;
+            text-align: center;
             position: relative;
+            overflow: hidden;
+        }
+
+        .department-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: #1e5ba8;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
         }
 
         .department-card:hover {
             border-color: #1e5ba8;
-            background: #f0f7ff;
-            transform: translateY(-2px);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(30, 91, 168, 0.15);
+        }
+
+        .department-card:hover::before {
+            transform: scaleX(1);
         }
 
         .department-card.selected {
             border-color: #1e5ba8;
-            background: #e3f2fd;
+            background: #f0f7ff;
+            box-shadow: 0 8px 20px rgba(30, 91, 168, 0.2);
+        }
+
+        .department-card.selected::before {
+            transform: scaleX(1);
+        }
+
+        .department-icon {
+            font-size: 42px;
+            margin-bottom: 15px;
         }
 
         .department-card h3 {
             color: #1e5ba8;
             font-size: 18px;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             font-weight: 600;
         }
 
         .department-card p {
             color: #666;
             font-size: 13px;
-            margin-bottom: 8px;
+            line-height: 1.5;
         }
 
-        .department-card .responsibilities {
-            font-size: 12px;
-            color: #888;
-            font-style: italic;
+        .department-card .badge {
+            display: inline-block;
+            background: #e3f2fd;
+            color: #1e5ba8;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-top: 10px;
         }
 
+        /* Password Section - Hidden by default */
         .password-section {
-            margin-bottom: 25px;
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.4s ease;
+            display: none;
         }
 
-        .password-section label {
+        .password-section.active {
+            opacity: 1;
+            transform: translateY(0);
+            display: block;
+        }
+
+        .selected-dept-info {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .selected-dept-info .icon {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .selected-dept-info h3 {
+            color: #1e5ba8;
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .selected-dept-info p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
             display: block;
             margin-bottom: 8px;
             color: #333;
@@ -107,46 +211,99 @@
             font-size: 14px;
         }
 
-        .password-section input {
+        .form-group input {
             width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
             font-size: 14px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            transition: border-color 0.3s;
+            transition: all 0.3s;
         }
 
-        .password-section input:focus {
+        .form-group input:focus {
             outline: none;
             border-color: #1e5ba8;
+            box-shadow: 0 0 0 3px rgba(30, 91, 168, 0.1);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
         }
 
         .btn-login {
             background: #1e5ba8;
             color: white;
-            padding: 12px 30px;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.3s;
-            width: 100%;
         }
 
         .btn-login:hover {
             background: #164a8a;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(30, 91, 168, 0.3);
         }
 
-        .btn-login:disabled {
+        .btn-back {
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .btn-back:hover {
+            background: #e0e0e0;
+        }
+
+        .btn:disabled {
             background: #ccc;
             cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Alert Messages */
+        .alert {
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-error {
+            background: #ffebee;
+            color: #c62828;
+            border-left: 4px solid #c62828;
+        }
+
+        .alert-success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-left: 4px solid #2e7d32;
         }
 
         .back-link {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 30px;
         }
 
         .back-link a {
@@ -157,187 +314,271 @@
         }
 
         .back-link a:hover {
-            opacity: 0.8;
+            opacity: 0.7;
         }
 
-        .error-message {
-            background: #ffebee;
-            color: #c62828;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            font-size: 14px;
-            display: none;
+        /* Footer */
+        footer {
+            background: #1e5ba8;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 80px;
         }
 
-        .success-message {
-            background: #e8f5e9;
-            color: #2e7d32;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 20px;
+        footer p {
             font-size: 14px;
-            display: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .department-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 20px 15px;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="login-container">
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-content">
+            <div class="logo">Student Feedback Portal</div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="#about">About</a>
+                <a href="#contact">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
         <div class="login-header">
             <h1>Admin Login</h1>
-            <p>Select your department and enter password to access the admin dashboard</p>
+            <p>Select your department to access the admin dashboard</p>
         </div>
 
-        <div id="errorMessage" class="error-message"></div>
-        <div id="successMessage" class="success-message"></div>
+        <div id="alertBox"></div>
 
-        <form id="adminLoginForm">
+        <!-- Department Selection -->
+        <div id="departmentSelection">
             <div class="department-grid">
-                <div class="department-card" data-dept="super" data-password="superadmin123">
-                    <h3>🔧 Super Admin</h3>
-                    <p>Full access to all feedback categories</p>
-                    <div class="responsibilities">Can view and manage all feedback across all departments</div>
+                <div class="department-card" data-dept="super" data-password="superadmin123" data-icon="🔧" data-title="Super Admin" data-desc="Full access to all feedback">
+                    <div class="department-icon">🔧</div>
+                    <h3>Super Admin</h3>
+                    <p>Full access to all feedback categories and admin management</p>
+                    <span class="badge">All Departments</span>
                 </div>
 
-                <div class="department-card" data-dept="facilities" data-password="facilities123">
-                    <h3>🏢 Facilities Department</h3>
+                <div class="department-card" data-dept="facilities" data-password="facilities123" data-icon="🏢" data-title="Facilities Admin" data-desc="Facilities & Infrastructure">
+                    <div class="department-icon">🏢</div>
+                    <h3>Facilities Admin</h3>
                     <p>Manages facilities-related feedback</p>
-                    <div class="responsibilities">Wi-Fi, Library, Labs, Hostel, Sports, Cleanliness, etc.</div>
+                    <span class="badge">Facilities</span>
                 </div>
 
-                <div class="department-card" data-dept="lectures" data-password="academic123">
-                    <h3>📚 Academic Department</h3>
+                <div class="department-card" data-dept="lectures" data-password="academic123" data-icon="📚" data-title="Academic Admin" data-desc="Teaching & Courses">
+                    <div class="department-icon">📚</div>
+                    <h3>Academic Admin</h3>
                     <p>Manages academic and teaching feedback</p>
-                    <div class="responsibilities">Teaching clarity, course content, evaluation, teaching aids, etc.</div>
+                    <span class="badge">Lectures</span>
                 </div>
 
-                <div class="department-card" data-dept="classrooms" data-password="infrastructure123">
-                    <h3>🏫 Infrastructure Department</h3>
-                    <p>Manages classroom and infrastructure feedback</p>
-                    <div class="responsibilities">Seating, lighting, equipment, scheduling, etc.</div>
+                <div class="department-card" data-dept="classrooms" data-password="infrastructure123" data-icon="🏫" data-title="Infrastructure Admin" data-desc="Classrooms & Equipment">
+                    <div class="department-icon">🏫</div>
+                    <h3>Infrastructure Admin</h3>
+                    <p>Manages classroom infrastructure feedback</p>
+                    <span class="badge">Classrooms</span>
                 </div>
 
-                <div class="department-card" data-dept="events" data-password="events123">
-                    <h3>🎉 Events Department</h3>
+                <div class="department-card" data-dept="events" data-password="events123" data-icon="🎉" data-title="Events Admin" data-desc="Events & Activities">
+                    <div class="department-icon">🎉</div>
+                    <h3>Events Admin</h3>
                     <p>Manages events and activities feedback</p>
-                    <div class="responsibilities">Event organization, timing, participation, communication, etc.</div>
+                    <span class="badge">Events</span>
                 </div>
 
-                <div class="department-card" data-dept="general" data-password="general123">
-                    <h3>📋 General Administration</h3>
-                    <p>Manages general feedback and miscellaneous issues</p>
-                    <div class="responsibilities">General feedback, suggestions, complaints, compliments, etc.</div>
+                <div class="department-card" data-dept="general" data-password="general123" data-icon="📋" data-title="General Admin" data-desc="General Feedback">
+                    <div class="department-icon">📋</div>
+                    <h3>General Admin</h3>
+                    <p>Manages general feedback and suggestions</p>
+                    <span class="badge">Other</span>
                 </div>
             </div>
+        </div>
 
-            <div class="password-section">
-                <label for="password">Department Password</label>
-                <input type="password" id="password" placeholder="Enter your department password" required>
+        <!-- Password Section (Hidden initially) -->
+        <div id="passwordSection" class="password-section">
+            <div class="selected-dept-info">
+                <div class="icon" id="selectedIcon">🔧</div>
+                <h3 id="selectedTitle">Super Admin</h3>
+                <p id="selectedDesc">Full access to all feedback</p>
             </div>
 
-            <button type="submit" class="btn-login" id="loginBtn">
-                Access Dashboard
-            </button>
-        </form>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="password">Enter Password</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        placeholder="Enter your admin password" 
+                        required
+                        autocomplete="current-password"
+                    >
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-back" id="btnBack">
+                        ← Change Department
+                    </button>
+                    <button type="submit" class="btn btn-login" id="btnLogin">
+                        Login →
+                    </button>
+                </div>
+            </form>
+        </div>
 
         <div class="back-link">
-            <a href="index.html">← Back to Home</a>
+            <a href="index.html">← Back to Student Portal</a>
         </div>
     </div>
 
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Student Feedback Portal. All rights reserved.</p>
+    </footer>
+
     <script>
         (function () {
-            const form = document.getElementById('adminLoginForm');
-            const passwordInput = document.getElementById('password');
-            const loginBtn = document.getElementById('loginBtn');
-            const errorMessage = document.getElementById('errorMessage');
-            const successMessage = document.getElementById('successMessage');
             const departmentCards = document.querySelectorAll('.department-card');
+            const departmentSelection = document.getElementById('departmentSelection');
+            const passwordSection = document.getElementById('passwordSection');
+            const loginForm = document.getElementById('loginForm');
+            const passwordInput = document.getElementById('password');
+            const btnBack = document.getElementById('btnBack');
+            const btnLogin = document.getElementById('btnLogin');
+            const alertBox = document.getElementById('alertBox');
 
-            let selectedDepartment = null;
+            const selectedIcon = document.getElementById('selectedIcon');
+            const selectedTitle = document.getElementById('selectedTitle');
+            const selectedDesc = document.getElementById('selectedDesc');
 
-            // Department card selection
+            let currentDepartment = null;
+            let correctPassword = null;
+
+            // Handle department card selection
             departmentCards.forEach(card => {
                 card.addEventListener('click', function() {
-                    // Remove selected class from all cards
-                    departmentCards.forEach(c => c.classList.remove('selected'));
+                    // Get department info
+                    currentDepartment = this.dataset.dept;
+                    correctPassword = this.dataset.password;
                     
-                    // Add selected class to clicked card
-                    this.classList.add('selected');
+                    const icon = this.dataset.icon;
+                    const title = this.dataset.title;
+                    const desc = this.dataset.desc;
+
+                    // Update password section with selected department info
+                    selectedIcon.textContent = icon;
+                    selectedTitle.textContent = title;
+                    selectedDesc.textContent = desc;
+
+                    // Hide department selection and show password section
+                    departmentSelection.style.display = 'none';
+                    passwordSection.classList.add('active');
                     
-                    // Set selected department
-                    selectedDepartment = this.dataset.dept;
-                    
-                    // Clear any error messages
-                    errorMessage.style.display = 'none';
-                    successMessage.style.display = 'none';
-                    
-                    // Focus password input
-                    passwordInput.focus();
+                    // Focus on password input
+                    setTimeout(() => {
+                        passwordInput.focus();
+                    }, 400);
+
+                    // Clear any alerts
+                    alertBox.innerHTML = '';
                 });
             });
 
-            // Form submission
-            form.addEventListener('submit', function(e) {
+            // Handle back button
+            btnBack.addEventListener('click', function() {
+                passwordSection.classList.remove('active');
+                setTimeout(() => {
+                    departmentSelection.style.display = 'block';
+                    passwordSection.style.display = 'none';
+                }, 300);
+                passwordInput.value = '';
+                alertBox.innerHTML = '';
+            });
+
+            // Handle login form submission
+            loginForm.addEventListener('submit', function(e) {
                 e.preventDefault();
-                
-                if (!selectedDepartment) {
-                    showError('Please select a department first.');
+                // Ensure a department was selected
+                if (!currentDepartment || !correctPassword) {
+                    showAlert('Please select a department first.', 'error');
                     return;
                 }
 
                 const enteredPassword = passwordInput.value.trim();
-                const correctPassword = document.querySelector(`[data-dept="${selectedDepartment}"]`).dataset.password;
 
                 if (enteredPassword !== correctPassword) {
-                    showError('Incorrect password. Please try again.');
+                    showAlert('Incorrect password. Please try again.', 'error');
+                    passwordInput.value = '';
+                    passwordInput.focus();
                     return;
                 }
 
-                // Store login info in sessionStorage
-                sessionStorage.setItem('adminDept', selectedDepartment);
+                // Store login info
+                sessionStorage.setItem('adminDept', currentDepartment);
                 sessionStorage.setItem('adminLoginTime', Date.now().toString());
 
-                showSuccess('Login successful! Redirecting...');
+                showAlert('Login successful! Redirecting...', 'success');
 
-                // Redirect to appropriate dashboard
+                // Disable button
+                btnLogin.disabled = true;
+                btnLogin.textContent = 'Redirecting...';
+
+                // Redirect based on department
                 setTimeout(() => {
-                    if (selectedDepartment === 'super') {
-                        window.location.href = 'admin_dashboard.html';
-                    } else {
-                        window.location.href = `admin_${selectedDepartment}.html`;
-                    }
-                }, 1000);
+                    const redirectMap = {
+                        super: 'admin_dashboard.html',
+                        facilities: 'admin_facilities.html',
+                        lectures: 'admin_lectures.html',
+                        classrooms: 'admin_classrooms.html',
+                        events: 'admin_events.html',
+                        general: 'admin_general.html'
+                    };
+                    window.location.href = redirectMap[currentDepartment] || 'admin_dashboard.html';
+                }, 1500);
             });
 
-            function showError(message) {
-                errorMessage.textContent = message;
-                errorMessage.style.display = 'block';
-                successMessage.style.display = 'none';
-            }
+            function showAlert(message, type) {
+                alertBox.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+                const alert = alertBox.querySelector('.alert');
+                alert.style.display = 'block';
 
-            function showSuccess(message) {
-                successMessage.textContent = message;
-                successMessage.style.display = 'block';
-                errorMessage.style.display = 'none';
+                if (type === 'error') {
+                    setTimeout(() => {
+                        alert.style.display = 'none';
+                    }, 4000);
+                }
             }
 
             // Check if already logged in
-            const currentDept = sessionStorage.getItem('adminDept');
-            if (currentDept) {
+            const loggedInDept = sessionStorage.getItem('adminDept');
+            if (loggedInDept) {
                 const loginTime = parseInt(sessionStorage.getItem('adminLoginTime'));
                 const currentTime = Date.now();
                 const sessionTimeout = 24 * 60 * 60 * 1000; // 24 hours
 
                 if (currentTime - loginTime < sessionTimeout) {
-                    // Still logged in, redirect to appropriate dashboard
-                    if (currentDept === 'super') {
-                        window.location.href = 'admin_dashboard.html';
-                    } else {
-                        window.location.href = `admin_${currentDept}.html`;
-                    }
+                    window.location.href = 'admin-dashboard.html';
                 } else {
-                    // Session expired, clear storage
                     sessionStorage.clear();
                 }
             }
