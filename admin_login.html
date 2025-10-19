@@ -570,16 +570,31 @@
             }
 
             // Check if already logged in
-            const loggedInDept = sessionStorage.getItem('adminDept');
-            if (loggedInDept) {
-                const loginTime = parseInt(sessionStorage.getItem('adminLoginTime'));
-                const currentTime = Date.now();
-                const sessionTimeout = 24 * 60 * 60 * 1000; // 24 hours
+            const urlParams = new URLSearchParams(window.location.search);
+            const isSwitching = urlParams.has('switch') || window.location.hash === '#switch';
+            if (isSwitching) {
+                // Clear session and stay on login to choose a new department
+                sessionStorage.clear();
+            } else {
+                const loggedInDept = sessionStorage.getItem('adminDept');
+                if (loggedInDept) {
+                    const loginTime = parseInt(sessionStorage.getItem('adminLoginTime'));
+                    const currentTime = Date.now();
+                    const sessionTimeout = 24 * 60 * 60 * 1000; // 24 hours
 
-                if (currentTime - loginTime < sessionTimeout) {
-                    window.location.href = 'admin-dashboard.html';
-                } else {
-                    sessionStorage.clear();
+                    if (currentTime - loginTime < sessionTimeout) {
+                        const redirectMapExisting = {
+                            super: 'admin_dashboard.html',
+                            facilities: 'admin_facilities.html',
+                            lectures: 'admin_lectures.html',
+                            classrooms: 'admin_classrooms.html',
+                            events: 'admin_events.html',
+                            general: 'admin_general.html'
+                        };
+                        window.location.href = redirectMapExisting[loggedInDept] || 'admin_dashboard.html';
+                    } else {
+                        sessionStorage.clear();
+                    }
                 }
             }
         })();
