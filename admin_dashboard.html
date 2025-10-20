@@ -3,348 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Feedback</title>
+    <title>Super Admin Dashboard - Student Feedback Portal</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f5f5;
-            color: #333;
-        }
-
-        .navbar {
-            width: 100%;
-            padding: 15px 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #1e5ba8;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .logo {
-            font-size: 22px;
-            font-weight: 600;
-            color: white;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 30px;
-            align-items: center;
-        }
-
-        .nav-links a {
-            color: white;
-            text-decoration: none;
-            transition: opacity 0.3s;
-            font-size: 14px;
-        }
-
-        .nav-links a:hover {
-            opacity: 0.8;
-        }
-
-        .btn-logout {
-            background: white;
-            color: #1e5ba8;
-            padding: 8px 20px;
-            border-radius: 5px;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 30px auto;
-            padding: 20px;
-        }
-
-        .dashboard-header {
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-            margin-bottom: 30px;
-        }
-
-        .dashboard-header h1 {
-            color: #1e5ba8;
-            font-size: 28px;
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
-
-        .dashboard-header p {
-            color: #666;
-            font-size: 14px;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-            text-align: center;
-        }
-
-        .stat-card h3 {
-            font-size: 32px;
-            color: #1e5ba8;
-            margin-bottom: 5px;
-        }
-
-        .stat-card p {
-            color: #666;
-            font-size: 14px;
-        }
-
-        .filters {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-            margin-bottom: 20px;
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .filters label {
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .filters select {
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-
-        .feedback-list {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-            overflow: hidden;
-        }
-
-        .feedback-item {
-            padding: 25px;
-            border-bottom: 1px solid #f0f0f0;
-            transition: background 0.3s;
-        }
-
-        .feedback-item:hover {
-            background: #fafafa;
-        }
-
-        .feedback-item:last-child {
-            border-bottom: none;
-        }
-
-        .feedback-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-            margin-bottom: 12px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .category-badge {
-            display: inline-block;
-            padding: 5px 12px;
-            border-radius: 15px;
-            font-size: 12px;
-            font-weight: 600;
-            background: #e3f2fd;
-            color: #1e5ba8;
-        }
-
-        .urgency-badge {
-            padding: 5px 12px;
-            border-radius: 15px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .urgency-low {
-            background: #e8f5e9;
-            color: #2e7d32;
-        }
-
-        .urgency-medium {
-            background: #fff3e0;
-            color: #ef6c00;
-        }
-
-        .urgency-high {
-            background: #ffebee;
-            color: #c62828;
-        }
-
-        .feedback-meta {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .feedback-text {
-            color: #333;
-            line-height: 1.6;
-            margin-bottom: 12px;
-            font-size: 14px;
-        }
-
-        .feedback-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 12px;
-            color: #999;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
-        .btn-action {
-            padding: 6px 15px;
-            border: none;
-            border-radius: 5px;
-            font-size: 12px;
-            cursor: pointer;
-            transition: opacity 0.3s;
-            font-weight: 600;
-        }
-
-        .btn-resolve {
-            background: #4caf50;
-            color: white;
-        }
-
-        .btn-delete {
-            background: #f44336;
-            color: white;
-        }
-
-        .btn-action:hover {
-            opacity: 0.8;
-        }
-
-        .status-resolved {
-            background: #f1f8f4;
-            border-left: 4px solid #4caf50;
-        }
-
-        .resolved-badge {
-            background: #4caf50;
-            color: white;
-            padding: 3px 10px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 600;
-        }
-
-        footer {
-            padding: 30px 5%;
-            background: #1e5ba8;
-            text-align: center;
-            color: white;
-            margin-top: 50px;
-        }
-
-        footer p {
-            font-size: 14px;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; color: #333; }
+        .navbar { width: 100%; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; background: #1e5ba8; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .logo { font-size: 22px; font-weight: 600; color: white; }
+        .nav-links { display: flex; gap: 30px; align-items: center; }
+        .nav-links a { color: white; text-decoration: none; transition: opacity 0.3s; font-size: 14px; }
+        .nav-links a:hover { opacity: 0.8; }
+        .btn-logout { background: white; color: #1e5ba8; padding: 8px 20px; border-radius: 5px; text-decoration: none; font-size: 14px; font-weight: 600; border: none; cursor: pointer; }
+        .container { max-width: 1400px; margin: 30px auto; padding: 20px; }
+        .dashboard-header { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 30px; }
+        .dashboard-header h1 { color: #1e5ba8; font-size: 28px; margin-bottom: 10px; font-weight: 600; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); text-align: center; }
+        .stat-card h3 { font-size: 32px; color: #1e5ba8; margin-bottom: 5px; }
+        .filters { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 20px; display: flex; gap: 15px; flex-wrap: wrap; align-items: center; }
+        .filters label { font-weight: 600; font-size: 14px; }
+        .filters select { padding: 8px 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; }
+        .feedback-list { background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); overflow: hidden; }
+        .feedback-item { padding: 25px; border-bottom: 1px solid #f0f0f0; transition: background 0.3s; }
+        .feedback-item:hover { background: #fafafa; }
+        .feedback-item:last-child { border-bottom: none; }
+        .feedback-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px; flex-wrap: wrap; gap: 10px; }
+        .feedback-meta { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .category-badge { display: inline-block; padding: 5px 12px; border-radius: 15px; font-size: 12px; font-weight: 600; background: #e3f2fd; color: #1e5ba8; }
+        .urgency-badge { padding: 5px 12px; border-radius: 15px; font-size: 12px; font-weight: 600; }
+        .urgency-low { background: #e8f5e9; color: #2e7d32; }
+        .urgency-medium { background: #fff3e0; color: #ef6c00; }
+        .urgency-high { background: #ffebee; color: #c62828; }
+        .btn-action { padding: 6px 15px; border: none; border-radius: 5px; font-size: 12px; cursor: pointer; transition: opacity 0.3s; font-weight: 600; }
+        .btn-resolve { background: #4caf50; color: white; }
+        .btn-delete { background: #f44336; color: white; }
+        .status-resolved { background: #f1f8f4; border-left: 4px solid #4caf50; }
+        footer { padding: 30px 5%; background: #1e5ba8; text-align: center; color: white; margin-top: 50px; }
+        footer p { font-size: 14px; }
     </style>
-</head>
-<body>
-    <nav class="navbar">
-        <div class="logo">🔧 Super Admin Dashboard</div>
-        <div class="nav-links">
-            <a href="admin_login.html?switch=1">Switch Department</a>
-            <button class="btn-logout" onclick="logout()">Logout</button>
-        </div>
-    </nav>
-
-    <div class="container">
-        <div class="dashboard-header">
-            <h1>Super Admin Dashboard <span style="display: inline-block; background: #e3f2fd; color: #1e5ba8; padding: 5px 12px; border-radius: 15px; font-size: 12px; font-weight: 600; margin-left: 10px;">SUPER ADMIN</span></h1>
-            <p>Manage and review all student feedback submissions across all departments</p>
-        </div>
-
-        <div class="stats-grid">
-            <div class="stat-card">
-                <h3 id="stat-total">0</h3>
-                <p>Total Feedback</p>
+    </head>
+    <body>
+        <nav class="navbar">
+            <div class="logo">🔧 Super Admin Dashboard</div>
+            <div class="nav-links">
+                <a href="admin_login.html?switch=1">Switch Department</a>
+                <button class="btn-logout" onclick="logout()">Logout</button>
             </div>
-            <div class="stat-card">
-                <h3 id="stat-pending">0</h3>
-                <p>Pending Review</p>
-            </div>
-            <div class="stat-card">
-                <h3 id="stat-resolved">0</h3>
-                <p>Resolved</p>
-            </div>
-            <div class="stat-card">
-                <h3 id="stat-high">0</h3>
-                <p>High Priority</p>
-            </div>
-        </div>
+        </nav>
 
-        <div class="filters">
-            <label>Filter by:</label>
-            <select onchange="filterFeedback(this.value)">
-                <option value="all">All Categories</option>
-                <option value="Lectures">Lectures</option>
-                <option value="Classrooms">Classrooms</option>
-                <option value="Facilities">Facilities</option>
-                <option value="Events">Events</option>
-                <option value="Other">Other</option>
-            </select>
+        <div class="container">
+            <div class="dashboard-header">
+                <h1>Super Admin Dashboard <span style="display:inline-block;background:#e3f2fd;color:#1e5ba8;padding:5px 12px;border-radius:15px;font-size:12px;font-weight:600;margin-left:10px;">SUPER ADMIN</span></h1>
+                <p>Manage and review all student feedback across all departments</p>
+            </div>
 
-            <select onchange="filterUrgency(this.value)">
-                <option value="all">All Urgency</option>
-                <option value="High">High</option>
-                <option value="Medium">Medium</option>
-                <option value="Low">Low</option>
-            </select>
+            <div class="stats-grid">
+                <div class="stat-card"><h3 id="stat-total">0</h3><p>Total Feedback</p></div>
+                <div class="stat-card"><h3 id="stat-pending">0</h3><p>Pending Review</p></div>
+                <div class="stat-card"><h3 id="stat-resolved">0</h3><p>Resolved</p></div>
+                <div class="stat-card"><h3 id="stat-high">0</h3><p>High Priority</p></div>
+            </div>
 
-            <select onchange="filterStatus(this.value)">
-                <option value="all">All Status</option>
-                <option value="pending">Pending</option>
-                <option value="resolved">Resolved</option>
-            </select>
+            <div class="filters">
+                <label>Filter by:</label>
+                <select onchange="filterCategory(this.value)">
+                    <option value="all">All Categories</option>
+                    <option value="Lectures">Lectures</option>
+                    <option value="Classrooms">Classrooms</option>
+                    <option value="Facilities">Facilities</option>
+                    <option value="Events">Events</option>
+                    <option value="Other">Other</option>
+                </select>
+                <select onchange="filterUrgency(this.value)">
+                    <option value="all">All Urgency</option>
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Low">Low</option>
+                </select>
+                <select onchange="filterStatus(this.value)">
+                    <option value="all">All Status</option>
+                    <option value="pending">Pending</option>
+                    <option value="resolved">Resolved</option>
+                </select>
+            </div>
+
+            <div id="feedbackList" class="feedback-list"></div>
         </div>
 
-        <div id="feedbackList" class="feedback-list"></div>
-    </div>
+        <footer>
+            <p>&copy; 2025 Student Feedback Portal. All rights reserved.</p>
+        </footer>
 
-    <footer>
-        <p>&copy; 2025 Student Feedback Portal. All rights reserved.</p>
-    </footer>
-
-    <script>
+        <script>
         (function () {
             const listEl = document.getElementById('feedbackList');
             const statTotal = document.getElementById('stat-total');
@@ -355,7 +104,7 @@
             let feedbacks = [];
             let activeFilters = { category: 'all', urgency: 'all', status: 'all' };
 
-            // Check if user is logged in as super admin
+            // Access control
             const adminDept = sessionStorage.getItem('adminDept');
             if (adminDept !== 'super') {
                 alert('Access denied. Please login as Super Admin.');
@@ -364,26 +113,18 @@
             }
 
             async function load() {
-                // Try API first
                 try {
                     const res = await fetch('http://localhost:3000/api/feedbacks');
                     if (!res.ok) throw new Error('API error');
                     feedbacks = await res.json();
-                    // Mirror to localStorage for offline viewing
+                    // Ensure newest first
+                    feedbacks.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                     try { localStorage.setItem('feedbacks', JSON.stringify(feedbacks)); } catch (_) {}
-                    return;
                 } catch (_) {
-                    // Fallback to localStorage
-                    try {
-                        feedbacks = JSON.parse(localStorage.getItem('feedbacks') || '[]');
-                    } catch (_) {
-                        feedbacks = [];
-                    }
+                    try { feedbacks = JSON.parse(localStorage.getItem('feedbacks') || '[]'); } catch (_) { feedbacks = []; }
+                    // Ensure newest first for offline copy as well
+                    feedbacks.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 }
-            }
-
-            function save() {
-                localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
             }
 
             function urgencyClass(u) {
@@ -416,7 +157,7 @@
                 if (items.length === 0) {
                     const empty = document.createElement('div');
                     empty.className = 'feedback-item';
-                    empty.innerHTML = '<p class="feedback-text">No feedback found.</p>';
+                    empty.innerHTML = '<p style="color:#666">No feedback found.</p>';
                     listEl.appendChild(empty);
                     renderStats();
                     return;
@@ -441,21 +182,23 @@
                     meta.appendChild(cat);
                     meta.appendChild(urg);
                     if (item.status === 'resolved') {
-                        const res = document.createElement('span');
-                        res.className = 'resolved-badge';
-                        res.textContent = '✓ Resolved';
-                        meta.appendChild(res);
+                        const resBadge = document.createElement('span');
+                        resBadge.style.background = '#4caf50';
+                        resBadge.style.color = '#fff';
+                        resBadge.style.padding = '3px 10px';
+                        resBadge.style.borderRadius = '12px';
+                        resBadge.style.fontSize = '11px';
+                        resBadge.style.fontWeight = '600';
+                        resBadge.textContent = '✓ Resolved';
+                        meta.appendChild(resBadge);
                     }
 
                     const actions = document.createElement('div');
-                    actions.className = 'action-buttons';
-                    if (item.status !== 'resolved') {
-                        const btnResolve = document.createElement('button');
-                        btnResolve.className = 'btn-action btn-resolve';
-                        btnResolve.textContent = 'Mark Resolved';
-                        btnResolve.addEventListener('click', () => onResolve(item.id));
-                        actions.appendChild(btnResolve);
-                    }
+                    const btnResolve = document.createElement('button');
+                    btnResolve.className = 'btn-action btn-resolve';
+                    btnResolve.textContent = 'Mark Resolved';
+                    btnResolve.addEventListener('click', () => onResolve(item.id));
+                    if (item.status !== 'resolved') actions.appendChild(btnResolve);
                     const btnDelete = document.createElement('button');
                     btnDelete.className = 'btn-action btn-delete';
                     btnDelete.textContent = 'Delete';
@@ -464,26 +207,25 @@
 
                     header.appendChild(meta);
                     header.appendChild(actions);
-
                     wrapper.appendChild(header);
 
-                    // Subcategory display (right after header, as additional context)
                     if (item.subcategory) {
-                        const subcategoryEl = document.createElement('div');
-                        subcategoryEl.style.marginBottom = '10px';
-                        subcategoryEl.style.fontSize = '13px';
-                        subcategoryEl.style.color = '#666';
-                        subcategoryEl.innerHTML = `<strong style="color: #1e5ba8;">Subcategory:</strong> ${item.subcategory}`;
-                        wrapper.appendChild(subcategoryEl);
+                        const subEl = document.createElement('div');
+                        subEl.style.marginBottom = '10px';
+                        subEl.style.fontSize = '13px';
+                        subEl.style.color = '#666';
+                        subEl.innerHTML = '<strong style="color:#1e5ba8;">Subcategory:</strong> ' + item.subcategory;
+                        wrapper.appendChild(subEl);
                     }
 
                     const text = document.createElement('p');
-                    text.className = 'feedback-text';
-                    text.style.marginTop = '12px';
+                    text.style.color = '#333';
+                    text.style.lineHeight = '1.6';
+                    text.style.marginBottom = '12px';
+                    text.style.fontSize = '14px';
                     text.textContent = item.text;
                     wrapper.appendChild(text);
 
-                    // Suggestions display (if provided)
                     if (item.suggestions && item.suggestions.trim()) {
                         const suggestionsEl = document.createElement('div');
                         suggestionsEl.style.marginTop = '12px';
@@ -491,25 +233,22 @@
                         suggestionsEl.style.backgroundColor = '#f0f7ff';
                         suggestionsEl.style.borderLeft = '4px solid #1e5ba8';
                         suggestionsEl.style.borderRadius = '4px';
-                        
-                        const suggestionsLabel = document.createElement('p');
-                        suggestionsLabel.style.fontWeight = '600';
-                        suggestionsLabel.style.color = '#1e5ba8';
-                        suggestionsLabel.style.marginBottom = '6px';
-                        suggestionsLabel.style.fontSize = '13px';
-                        suggestionsLabel.textContent = '💡 Suggestions:';
-                        suggestionsEl.appendChild(suggestionsLabel);
-                        
-                        const suggestionsText = document.createElement('p');
-                        suggestionsText.className = 'feedback-text';
-                        suggestionsText.style.margin = '0';
-                        suggestionsText.textContent = item.suggestions;
-                        suggestionsEl.appendChild(suggestionsText);
-                        
+                        const label = document.createElement('p');
+                        label.style.fontWeight = '600';
+                        label.style.color = '#1e5ba8';
+                        label.style.marginBottom = '6px';
+                        label.style.fontSize = '13px';
+                        label.textContent = '💡 Suggestions:';
+                        const sText = document.createElement('p');
+                        sText.style.margin = '0';
+                        sText.style.fontSize = '14px';
+                        sText.style.color = '#333';
+                        sText.textContent = item.suggestions;
+                        suggestionsEl.appendChild(label);
+                        suggestionsEl.appendChild(sText);
                         wrapper.appendChild(suggestionsEl);
                     }
 
-                    // Optional student info block (only if any exists)
                     if (item.studentName || item.rollNo || item.department || item.courseNo) {
                         const info = document.createElement('div');
                         info.style.marginTop = '12px';
@@ -519,25 +258,28 @@
                         info.style.fontSize = '13px';
                         info.style.color = '#666';
                         const parts = [];
-                        if (item.studentName) parts.push(`<strong>Name:</strong> ${item.studentName}`);
-                        if (item.rollNo) parts.push(`<strong>Roll No:</strong> ${item.rollNo}`);
-                        if (item.department) parts.push(`<strong>Department:</strong> ${item.department}`);
-                        if (item.courseNo) parts.push(`<strong>Course:</strong> ${item.courseNo}`);
+                        if (item.studentName) parts.push('<strong>Name:</strong> ' + item.studentName);
+                        if (item.rollNo) parts.push('<strong>Roll No:</strong> ' + item.rollNo);
+                        if (item.department) parts.push('<strong>Department:</strong> ' + item.department);
+                        if (item.courseNo) parts.push('<strong>Course:</strong> ' + item.courseNo);
                         info.innerHTML = parts.join(' &nbsp;•&nbsp; ');
                         wrapper.appendChild(info);
                     }
 
                     const footer = document.createElement('div');
-                    footer.className = 'feedback-footer';
-                    footer.style.marginTop = '15px';
+                    footer.style.display = 'flex';
+                    footer.style.justifyContent = 'space-between';
+                    footer.style.alignItems = 'center';
+                    footer.style.fontSize = '12px';
+                    footer.style.color = '#999';
                     const submitted = document.createElement('span');
                     submitted.textContent = 'Submitted: ' + (item.createdAtDisplay || new Date(item.createdAt).toLocaleString());
                     const idSpan = document.createElement('span');
                     idSpan.textContent = 'ID: #' + item.id;
                     footer.appendChild(submitted);
                     footer.appendChild(idSpan);
-
                     wrapper.appendChild(footer);
+
                     listEl.appendChild(wrapper);
                 });
 
@@ -545,25 +287,20 @@
             }
 
             async function onResolve(id) {
-                // Try API first
                 try {
-                    const res = await fetch(`http://localhost:3000/api/feedbacks/${encodeURIComponent(id)}/resolve`, {
-                        method: 'PATCH'
-                    });
+                    const res = await fetch(`http://localhost:3000/api/feedbacks/${encodeURIComponent(id)}/resolve`, { method: 'PATCH' });
                     if (!res.ok) throw new Error('API error');
                     const updated = await res.json();
-                    const idxApi = feedbacks.findIndex(f => f.id === id);
-                    if (idxApi !== -1) feedbacks[idxApi] = updated;
-                    save();
+                    const idx = feedbacks.findIndex(f => f.id === id);
+                    if (idx !== -1) feedbacks[idx] = updated;
+                    localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
                     render();
                     alert('Feedback marked as resolved!');
-                    return;
                 } catch (_) {
-                    // Fallback: update local copy only
                     const idx = feedbacks.findIndex(f => f.id === id);
                     if (idx === -1) return;
                     feedbacks[idx].status = 'resolved';
-                    save();
+                    localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
                     render();
                     alert('Feedback marked as resolved (offline)');
                 }
@@ -571,45 +308,24 @@
 
             async function onDelete(id) {
                 if (!confirm('Are you sure you want to delete this feedback?')) return;
-                // Try API first
                 try {
-                    const res = await fetch(`http://localhost:3000/api/feedbacks/${encodeURIComponent(id)}`, {
-                        method: 'DELETE'
-                    });
+                    const res = await fetch(`http://localhost:3000/api/feedbacks/${encodeURIComponent(id)}`, { method: 'DELETE' });
                     if (!res.ok && res.status !== 204) throw new Error('API error');
-                } catch (_) {
-                    // ignore and proceed to local delete
-                }
+                } catch (_) { /* ignore */ }
                 feedbacks = feedbacks.filter(f => f.id !== id);
-                save();
+                localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
                 render();
             }
 
-            window.filterFeedback = function (category) {
-                activeFilters.category = category;
-                render();
-            };
+            window.filterCategory = function (category) { activeFilters.category = category; render(); };
+            window.filterUrgency = function (urgency) { activeFilters.urgency = urgency; render(); };
+            window.filterStatus = function (status) { activeFilters.status = status; render(); };
+            window.logout = function () { sessionStorage.clear(); window.location.href = 'admin_login.html'; };
 
-            window.filterUrgency = function (urgency) {
-                activeFilters.urgency = urgency;
-                render();
-            };
-
-            window.filterStatus = function (status) {
-                activeFilters.status = status;
-                render();
-            };
-
-            window.logout = function() {
-                sessionStorage.clear();
-                window.location.href = 'admin_login.html';
-            };
-
-            (async function init() {
-                await load();
-                render();
-            })();
+            (async function init() { await load(); render(); })();
         })();
-    </script>
-</body>
-</html>
+        </script>
+    </body>
+    </html>
+
+

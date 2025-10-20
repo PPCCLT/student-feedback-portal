@@ -4,6 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { nanoid } from 'nanoid';
+import { MongoClient } from 'mongodb';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -37,6 +38,30 @@ app.use(express.json());
 // Serve static files (HTML, CSS, JS)
 app.use(express.static(__dirname));
 
+// MongoDB setup (optional). If not available, fallback to JSON file.
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017';
+const MONGODB_DB = process.env.MONGODB_DB || 'student_feedback_portal';
+const MONGODB_COLLECTION = process.env.MONGODB_COLLECTION || 'feedbacks';
+
+let mongoClient = null;
+let feedbacksCollection = null;
+
+async function initMongo() {
+  try {
+    mongoClient = new MongoClient(MONGODB_URI, { serverSelectionTimeoutMS: 3000 });
+    await mongoClient.connect();
+    const db = mongoClient.db(MONGODB_DB);
+    feedbacksCollection = db.collection(MONGODB_COLLECTION);
+    await feedbacksCollection.createIndex({ id: 1 }, { unique: true });
+    await feedbacksCollection.createIndex({ createdAt: -1 });
+    console.log('[mongo] connected');
+  } catch (err) {
+    feedbacksCollection = null;
+    console.warn('[mongo] not available, using JSON file storage');
+  }
+}
+initMongo();
+
 // Global process-level error handlers to avoid silent crashes
 process.on('uncaughtException', (err) => {
   console.error('[uncaughtException]', err);
@@ -49,8 +74,15 @@ process.on('unhandledRejection', (reason) => {
 app.get('/health', (req, res) => res.json({ ok: true }));
 
 // List feedbacks
-app.get('/api/feedbacks', (req, res, next) => {
+app.get('/api/feedbacks', async (req, res, next) => {
   try {
+    if (feedbacksCollection) {
+      const items = await feedbacksCollection
+        .find({})
+        .sort({ createdAt: -1 })
+        .toArray();
+      return res.json(items);
+    }
     const items = readAll();
     res.json(items);
   } catch (err) {
@@ -59,7 +91,7 @@ app.get('/api/feedbacks', (req, res, next) => {
 });
 
 // Create feedback
-app.post('/api/feedbacks', (req, res, next) => {
+app.post('/api/feedbacks', async (req, res, next) => {
   const { category, subcategory, text, suggestions, urgency, studentName, rollNo, department, courseNo } = req.body || {};
   if (!category || !subcategory || !text || !urgency) {
     return res.status(400).json({ error: 'category, subcategory, text, urgency are required' });
@@ -72,6 +104,8 @@ app.post('/api/feedbacks', (req, res, next) => {
       subcategory: String(subcategory).trim(),
       text: String(text).trim(),
       urgency,
+      // Optional free-text suggestions from the student
+      ...(suggestions ? { suggestions: String(suggestions).trim() } : {}),
       // Optional student fields (only stored if provided)
       ...(studentName ? { studentName: String(studentName).trim() } : {}),
       ...(rollNo ? { rollNo: String(rollNo).trim() } : {}),
@@ -83,6 +117,12 @@ app.post('/api/feedbacks', (req, res, next) => {
         year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit'
       }).format(now)
     };
+
+    if (feedbacksCollection) {
+      await feedbacksCollection.insertOne(item);
+      return res.status(201).json(item);
+    }
+
     const items = readAll();
     items.unshift(item);
     writeAll(items);
@@ -93,9 +133,18 @@ app.post('/api/feedbacks', (req, res, next) => {
 });
 
 // Resolve feedback
-app.patch('/api/feedbacks/:id/resolve', (req, res, next) => {
+app.patch('/api/feedbacks/:id/resolve', async (req, res, next) => {
   try {
     const id = req.params.id;
+    if (feedbacksCollection) {
+      const result = await feedbacksCollection.findOneAndUpdate(
+        { id },
+        { $set: { status: 'resolved' } },
+        { returnDocument: 'after' }
+      );
+      if (!result || !result.value) return res.status(404).json({ error: 'Not found' });
+      return res.json(result.value);
+    }
     const items = readAll();
     const idx = items.findIndex(f => f.id === id);
     if (idx === -1) return res.status(404).json({ error: 'Not found' });
@@ -108,13 +157,18 @@ app.patch('/api/feedbacks/:id/resolve', (req, res, next) => {
 });
 
 // Delete feedback
-app.delete('/api/feedbacks/:id', (req, res, next) => {
+app.delete('/api/feedbacks/:id', async (req, res, next) => {
   try {
     const id = req.params.id;
+    if (feedbacksCollection) {
+      const result = await feedbacksCollection.deleteOne({ id });
+      if (result.deletedCount === 0) return res.status(404).json({ error: 'Not found' });
+      return res.status(204).send();
+    }
     const items = readAll();
-    const next = items.filter(f => f.id !== id);
-    if (next.length === items.length) return res.status(404).json({ error: 'Not found' });
-    writeAll(next);
+    const nextItems = items.filter(f => f.id !== id);
+    if (nextItems.length === items.length) return res.status(404).json({ error: 'Not found' });
+    writeAll(nextItems);
     res.status(204).send();
   } catch (err) {
     next(err);

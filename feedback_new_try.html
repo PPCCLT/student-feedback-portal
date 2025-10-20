@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Feedback</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .navbar {
+            width: 100%;
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #1e5ba8;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.3s;
+            font-size: 14px;
+        }
+
+        .nav-links a:hover {
+            opacity: 0.8;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        .form-card {
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .form-card h2 {
+            color: #1e5ba8;
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .form-card p {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        select, textarea, input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: border-color 0.3s;
+        }
+
+        select:focus, textarea:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: #1e5ba8;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .btn-submit {
+            background: #1e5ba8;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            width: 100%;
+        }
+
+        .btn-submit:hover {
+            background: #164a8a;
+        }
+
+        .required {
+            color: #d32f2f;
+        }
+
+        footer {
+            padding: 30px 5%;
+            background: #1e5ba8;
+            text-align: center;
+            color: white;
+            margin-top: 50px;
+        }
+
+        footer p {
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">Student Feedback Portal</div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="#about">About</a>
+            <a href="#contact">Contact</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="form-card">
+            <h2>Submit Your Feedback</h2>
+            <p>Your feedback is anonymous and helps us improve the quality of education and facilities.</p>
+            
+            <form id="feedbackForm" method="POST" action="submit.php">
+                <!-- Optional fields -->
+                <div class="form-group">
+                    <label for="studentName">Name</label>
+                    <input type="text" id="studentName" name="studentName" placeholder="Enter your name (optional)">
+                </div>
+
+                <div class="form-group">
+                    <label for="rollNo">Roll no.</label>
+                    <input type="text" id="rollNo" name="rollNo" placeholder="Enter your roll number (optional)">
+                </div>
+
+                <div class="form-group">
+                    <label for="department">Department</label>
+                    <input type="text" id="department" name="department" placeholder="Enter your department (optional)">
+                </div>
+
+                <div class="form-group">
+                    <label for="courseNo">Course no.</label>
+                    <input type="text" id="courseNo" name="courseNo" placeholder="Enter your course number (optional)">
+                </div>
+
+                <div class="form-group">
+                    <label for="category">Category <span class="required">*</span></label>
+                    <select name="category" id="category" required>
+                        <option value="">-- Select Category --</option>
+                        <option value="Lectures">Lectures</option>
+                        <option value="Classrooms">Classrooms</option>
+                        <option value="Facilities">Facilities</option>
+                        <option value="Events">Events</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="subcategory">Subcategory / Feedback Title <span class="required">*</span></label>
+                    <select name="subcategory" id="subcategory" required disabled>
+                        <option value="">-- Select Category First --</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="feedback">Feedback <span class="required">*</span></label>
+                    <textarea 
+                        name="feedback" 
+                        id="feedback" 
+                        placeholder="Please share your detailed feedback here..."
+                        required
+                    ></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="suggestions">Suggestions</label>
+                    <textarea 
+                        name="suggestions" 
+                        id="suggestions" 
+                        placeholder="Any suggestions for improvement? (Optional)"
+                    ></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="urgency">Urgency Level <span class="required">*</span></label>
+                    <select name="urgency" id="urgency" required>
+                        <option value="">-- Select Urgency --</option>
+                        <option value="Low">Low</option>
+                        <option value="Medium">Medium</option>
+                        <option value="High">High</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-submit">Submit Feedback</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Student Feedback Portal. All rights reserved.</p>
+    </footer>
+    <script>
+        (function () {
+            const form = document.getElementById('feedbackForm');
+            if (!form) return;
+
+            // Define subcategories for each main category
+            const subcategories = {
+                'Lectures': [
+                    'Teaching Clarity',
+                    'Course Content Quality',
+                    'Evaluation & Assessment ',
+                    'Pace of Teacing',
+                    'Use of Teaching Aids / Technology',
+                    'Other'
+                ],
+                'Classrooms': [
+                    'Seating and Comfort',
+                    'Lighting and Ventilation',
+                    'Audio-Visual Equipment',
+                    'Classroom Availability / Scheduling Issues',
+                    'Other'
+                ],
+                'Facilities': [
+                    'Wi-Fi & Internet Access',
+                    'Library Resources',
+                    'Laboratory Equipment & Maintenance',
+                    'Computer Labs',
+                    'Hostel / Accommodation',
+                    'Sports Facilities',
+                    'Cleanliness & Hygiene',
+                    'Other'
+                ],
+                'Events': [
+                    'Event Organization & Coordination',
+                    'Timing / Scheduling',
+                    'Relevance to Academics',
+                    'Participation & Opportunities',
+                    'Communication / Information Dissemination',
+                    'Other'
+                ],
+                'Other': [
+                    'General Feedback',
+                    'Suggestions',
+                    'Complaints',
+                    'Compliments',
+                    'Miscellaneous'
+                ]
+            };
+
+            // Get form elements
+            const categorySelect = document.getElementById('category');
+            const subcategorySelect = document.getElementById('subcategory');
+
+            // Function to update subcategory options
+            function updateSubcategories() {
+                const selectedCategory = categorySelect.value;
+                
+                // Clear existing options
+                subcategorySelect.innerHTML = '';
+                
+                if (selectedCategory && subcategories[selectedCategory]) {
+                    // Enable subcategory select
+                    subcategorySelect.disabled = false;
+                    
+                    // Add default option
+                    const defaultOption = document.createElement('option');
+                    defaultOption.value = '';
+                    defaultOption.textContent = '-- Select Subcategory --';
+                    subcategorySelect.appendChild(defaultOption);
+                    
+                    // Add subcategory options
+                    subcategories[selectedCategory].forEach(subcategory => {
+                        const option = document.createElement('option');
+                        option.value = subcategory;
+                        option.textContent = subcategory;
+                        subcategorySelect.appendChild(option);
+                    });
+                } else {
+                    // Disable subcategory select
+                    subcategorySelect.disabled = true;
+                    const defaultOption = document.createElement('option');
+                    defaultOption.value = '';
+                    defaultOption.textContent = '-- Select Category First --';
+                    subcategorySelect.appendChild(defaultOption);
+                }
+            }
+
+            // Add event listener for category change
+            categorySelect.addEventListener('change', updateSubcategories);
+
+            function generateId() {
+                const rnd = Math.floor(Math.random() * 100000).toString().padStart(5, '0');
+                const ts = Date.now().toString().slice(-4);
+                return `FB-${ts}${rnd}`;
+            }
+
+            function formatDate(date) {
+                const options = { year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' };
+                return new Intl.DateTimeFormat(undefined, options).format(date);
+            }
+
+            form.addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                const category = document.getElementById('category').value;
+                const subcategory = document.getElementById('subcategory').value;
+                const feedback = document.getElementById('feedback').value.trim();
+                const suggestions = (document.getElementById('suggestions')?.value || '').trim();
+                const urgency = document.getElementById('urgency').value;
+                const studentName = (document.getElementById('studentName')?.value || '').trim();
+                const rollNo = (document.getElementById('rollNo')?.value || '').trim();
+                const department = (document.getElementById('department')?.value || '').trim();
+                const courseNo = (document.getElementById('courseNo')?.value || '').trim();
+
+                if (!category || !subcategory || !feedback || !urgency) {
+                    alert('Please fill all required fields.');
+                    return;
+                }
+
+                const localSubmission = {
+                    id: generateId(),
+                    category: category,
+                    subcategory: subcategory,
+                    text: feedback,
+                    suggestions: suggestions,
+                    urgency: urgency,
+                    studentName: studentName,
+                    rollNo: rollNo,
+                    department: department,
+                    courseNo: courseNo,
+                    status: 'pending',
+                    createdAt: new Date().toISOString(),
+                    createdAtDisplay: formatDate(new Date())
+                };
+
+                // Try API first, fallback to localStorage
+                try {
+                    const res = await fetch('http://localhost:3000/api/feedbacks', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            category,
+                            subcategory,
+                            text: feedback,
+                            suggestions,
+                            urgency,
+                            studentName,
+                            rollNo,
+                            department,
+                            courseNo
+                        })
+                    });
+                    if (!res.ok) throw new Error('API error');
+                    // Optionally mirror to localStorage for offline viewing
+                    const created = await res.json();
+                    try {
+                        const existing = JSON.parse(localStorage.getItem('feedbacks') || '[]');
+                        existing.unshift(created);
+                        localStorage.setItem('feedbacks', JSON.stringify(existing));
+                    } catch (_) { /* ignore */ }
+                } catch (_) {
+                    try {
+                        const existing = JSON.parse(localStorage.getItem('feedbacks') || '[]');
+                        existing.unshift(localSubmission);
+                        localStorage.setItem('feedbacks', JSON.stringify(existing));
+                    } catch (_) {
+                        localStorage.setItem('feedbacks', JSON.stringify([localSubmission]));
+                    }
+                }
+
+                alert('Thank you! Your feedback has been submitted successfully. We appreciate your input!');
+                window.location.href = 'index.html';
+            });
+        })();
+    </script> 
+</body>
+</html>S

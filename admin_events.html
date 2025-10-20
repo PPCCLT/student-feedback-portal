@@ -513,18 +513,22 @@
 
                     header.appendChild(meta);
                     header.appendChild(actions);
+                    wrapper.appendChild(header);
 
-                    // Subcategory highlight
+                    // Subcategory line (standardized)
                     if (item.subcategory) {
-                        const subcategoryEl = document.createElement('div');
-                        subcategoryEl.className = 'subcategory-highlight';
-                        subcategoryEl.textContent = `🎉 ${item.subcategory}`;
-                        wrapper.appendChild(subcategoryEl);
+                        const subEl = document.createElement('div');
+                        subEl.style.marginBottom = '10px';
+                        subEl.style.fontSize = '13px';
+                        subEl.style.color = '#666';
+                        subEl.innerHTML = '<strong style="color:#1e5ba8;">Subcategory:</strong> ' + item.subcategory;
+                        wrapper.appendChild(subEl);
                     }
 
                     const text = document.createElement('p');
                     text.className = 'feedback-text';
                     text.textContent = item.text;
+                    wrapper.appendChild(text);
 
                     // Suggestions display
                     if (item.suggestions && item.suggestions.trim()) {
@@ -564,8 +568,6 @@
                     footer.appendChild(submitted);
                     footer.appendChild(idSpan);
 
-                    wrapper.appendChild(header);
-                    wrapper.appendChild(text);
                     wrapper.appendChild(footer);
                     listEl.appendChild(wrapper);
                 });
