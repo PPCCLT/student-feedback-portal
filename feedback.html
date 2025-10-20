@@ -260,6 +260,49 @@
             line-height: 1.6;
         }
 
+        .tracking-info {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .tracking-id {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e5ba8;
+            margin-bottom: 10px;
+            word-break: break-all;
+        }
+
+        .tracking-instructions {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .btn-track {
+            background: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 15px;
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .btn-track:hover {
+            background: #218838;
+            transform: translateY(-1px);
+        }
+
         .btn-close {
             background: #1e5ba8;
             color: white;
@@ -326,6 +369,7 @@
             <div class="logo">Student Feedback Portal</div>
             <div class="nav-links">
                 <a href="index.html">Home</a>
+                <a href="track-feedback.html">Track Feedback</a>
                 <a href="#about">About</a>
                 <a href="#contact">Contact</a>
             </div>
@@ -448,6 +492,15 @@
             <div class="icon">✅</div>
             <h2>Thank You!</h2>
             <p>Your feedback has been submitted successfully. We appreciate your contribution to improving our institution.</p>
+            
+            <div class="tracking-info">
+                <div class="tracking-id" id="trackingIdDisplay">Your Feedback ID: <span id="feedbackIdSpan"></span></div>
+                <div class="tracking-instructions">
+                    <strong>Save this ID!</strong> You can use it to track the status of your feedback and see when actions are taken.
+                </div>
+                <a href="#" class="btn-track" id="trackFeedbackBtn">Track Your Feedback</a>
+            </div>
+            
             <button class="btn-close" onclick="closeModal()">Close</button>
         </div>
     </div>
@@ -553,7 +606,8 @@
                 });
 
                 if (response.ok) {
-                    showSuccessModal();
+                    const result = await response.json();
+                    showSuccessModal(result.id);
                     feedbackForm.reset();
                 } else {
                     throw new Error('API error');
@@ -567,12 +621,19 @@
                 feedbacks.push(formData);
                 localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
                 
-                showSuccessModal();
+                showSuccessModal(formData.id);
                 feedbackForm.reset();
             }
         });
 
-        function showSuccessModal() {
+        function showSuccessModal(feedbackId) {
+            // Update the tracking ID display
+            document.getElementById('feedbackIdSpan').textContent = feedbackId;
+            
+            // Update the track feedback button link
+            const trackBtn = document.getElementById('trackFeedbackBtn');
+            trackBtn.href = `track-feedback.html?id=${feedbackId}`;
+            
             successModal.classList.add('active');
         }
 

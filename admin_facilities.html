@@ -253,6 +253,11 @@
             color: white;
         }
 
+        .btn-progress {
+            background: #ff9800;
+            color: white;
+        }
+
         .btn-delete {
             background: #f44336;
             color: white;
@@ -267,8 +272,22 @@
             border-left: 4px solid #4caf50;
         }
 
+        .status-in-progress {
+            background: #fff8e1;
+            border-left: 4px solid #ff9800;
+        }
+
         .resolved-badge {
             background: #4caf50;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .progress-badge {
+            background: #ff9800;
             color: white;
             padding: 3px 10px;
             border-radius: 12px;
@@ -367,6 +386,7 @@
             <select onchange="filterStatus(this.value)">
                 <option value="all">All Status</option>
                 <option value="pending">Pending</option>
+                <option value="in-progress">In Progress</option>
                 <option value="resolved">Resolved</option>
             </select>
 
@@ -471,7 +491,10 @@
 
                 items.forEach(item => {
                     const wrapper = document.createElement('div');
-                    wrapper.className = 'feedback-item' + (item.status === 'resolved' ? ' status-resolved' : '');
+                    let statusClass = '';
+                    if (item.status === 'resolved') statusClass = ' status-resolved';
+                    else if (item.status === 'in-progress') statusClass = ' status-in-progress';
+                    wrapper.className = 'feedback-item' + statusClass;
                     wrapper.dataset.id = item.id;
 
                     const header = document.createElement('div');
@@ -496,15 +519,27 @@
                         res.className = 'resolved-badge';
                         res.textContent = '✓ Resolved';
                         meta.appendChild(res);
+                    } else if (item.status === 'in-progress') {
+                        const prog = document.createElement('span');
+                        prog.className = 'progress-badge';
+                        prog.textContent = '⏳ In Progress';
+                        meta.appendChild(prog);
                     }
 
                     const actions = document.createElement('div');
                     actions.className = 'action-buttons';
+                    if (item.status === 'pending') {
+                        const btnProgress = document.createElement('button');
+                        btnProgress.className = 'btn-action btn-progress';
+                        btnProgress.textContent = 'Start Progress';
+                        btnProgress.addEventListener('click', () => onUpdateStatus(item.id, 'in-progress'));
+                        actions.appendChild(btnProgress);
+                    }
                     if (item.status !== 'resolved') {
                         const btnResolve = document.createElement('button');
                         btnResolve.className = 'btn-action btn-resolve';
                         btnResolve.textContent = 'Mark Resolved';
-                        btnResolve.addEventListener('click', () => onResolve(item.id));
+                        btnResolve.addEventListener('click', () => onUpdateStatus(item.id, 'resolved'));
                         actions.appendChild(btnResolve);
                     }
                     const btnDelete = document.createElement('button');
@@ -577,10 +612,12 @@
                 renderStats();
             }
 
-            async function onResolve(id) {
+            async function onUpdateStatus(id, status) {
                 try {
-                    const res = await fetch(`http://localhost:3000/api/feedbacks/${encodeURIComponent(id)}/resolve`, {
-                        method: 'PATCH'
+                    const res = await fetch(`http://localhost:3000/api/feedbacks/${encodeURIComponent(id)}/status`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ status })
                     });
                     if (!res.ok) throw new Error('API error');
                     const updated = await res.json();
@@ -588,16 +625,18 @@
                     if (idx !== -1) feedbacks[idx] = updated;
                     save();
                     render();
-                    alert('Feedback marked as resolved!');
+                    alert(`Feedback status updated to ${status}!`);
                 } catch (_) {
                     const idx = feedbacks.findIndex(f => f.id === id);
                     if (idx === -1) return;
-                    feedbacks[idx].status = 'resolved';
+                    feedbacks[idx].status = status;
                     save();
                     render();
-                    alert('Feedback marked as resolved (offline)');
+                    alert(`Feedback status updated to ${status} (offline)`);
                 }
             }
+
+            async function onResolve(id) { await onUpdateStatus(id, 'resolved'); }
 
             async function onDelete(id) {
                 if (!confirm('Are you sure you want to delete this feedback?')) return;

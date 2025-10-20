@@ -132,7 +132,69 @@ app.post('/api/feedbacks', async (req, res, next) => {
   }
 });
 
-// Resolve feedback
+// Get single feedback by ID
+app.get('/api/feedbacks/:id', async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    if (feedbacksCollection) {
+      const feedback = await feedbacksCollection.findOne({ id });
+      if (!feedback) return res.status(404).json({ error: 'Not found' });
+      return res.json(feedback);
+    }
+    const items = readAll();
+    const feedback = items.find(f => f.id === id);
+    if (!feedback) return res.status(404).json({ error: 'Not found' });
+    res.json(feedback);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Update feedback status
+app.patch('/api/feedbacks/:id/status', async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const { status, adminComment } = req.body;
+    
+    if (!status || !['pending', 'in-progress', 'resolved'].includes(status)) {
+      return res.status(400).json({ error: 'Invalid status. Must be pending, in-progress, or resolved' });
+    }
+
+    const updateData = { 
+      status,
+      updatedAt: new Date().toISOString(),
+      updatedAtDisplay: new Intl.DateTimeFormat(undefined, {
+        year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit'
+      }).format(new Date())
+    };
+
+    if (adminComment) {
+      updateData.adminComment = String(adminComment).trim();
+    }
+
+    if (feedbacksCollection) {
+      const result = await feedbacksCollection.findOneAndUpdate(
+        { id },
+        { $set: updateData },
+        { returnDocument: 'after' }
+      );
+      if (!result || !result.value) return res.status(404).json({ error: 'Not found' });
+      return res.json(result.value);
+    }
+    
+    const items = readAll();
+    const idx = items.findIndex(f => f.id === id);
+    if (idx === -1) return res.status(404).json({ error: 'Not found' });
+    
+    Object.assign(items[idx], updateData);
+    writeAll(items);
+    res.json(items[idx]);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Resolve feedback (legacy endpoint for backward compatibility)
 app.patch('/api/feedbacks/:id/resolve', async (req, res, next) => {
   try {
     const id = req.params.id;
