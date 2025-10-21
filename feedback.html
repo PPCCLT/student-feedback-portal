@@ -616,7 +616,13 @@
                 // Fallback: Save to localStorage
                 console.log('Saving to localStorage');
                 const feedbacks = JSON.parse(localStorage.getItem('feedbacks') || '[]');
-                formData.id = 'FB-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+                // Generate ID similar to server format for consistency
+                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-';
+                let id = 'FB-';
+                for (let i = 0; i < 8; i++) {
+                    id += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                formData.id = id;
                 formData.status = 'pending';
                 feedbacks.push(formData);
                 localStorage.setItem('feedbacks', JSON.stringify(feedbacks));

@@ -426,7 +426,15 @@
             }
 
             function save() {
+                // Get all feedbacks from localStorage
                 const allFeedbacks = JSON.parse(localStorage.getItem('feedbacks') || '[]');
+                // Update any feedbacks that were modified in the current filtered array
+                feedbacks.forEach(updatedFeedback => {
+                    const idx = allFeedbacks.findIndex(f => f.id === updatedFeedback.id);
+                    if (idx !== -1) {
+                        allFeedbacks[idx] = updatedFeedback;
+                    }
+                });
                 localStorage.setItem('feedbacks', JSON.stringify(allFeedbacks));
             }
 
