@@ -28,9 +28,46 @@
         }
 
         .logo {
+            display: flex;
+            align-items: center;
+            gap: 20px;
             font-size: 22px;
             font-weight: 600;
             color: white;
+        }
+
+        .logo-container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-img {
+            height: 70px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 2px;
+        }
+
+        .logo-main-text {
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+            line-height: 1.1;
+        }
+
+        .logo-sub-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.95);
+            line-height: 1.1;
         }
 
         .nav-links {
@@ -342,7 +379,15 @@
 </head>
 <body>
     <nav class="navbar">
-        <div class="logo">📚 Academic Admin Dashboard</div>
+        <div class="logo">
+            <div class="logo-container">
+                <img src="assets/logos/IITB logo.png" alt="Institute Logo" class="logo-img" onerror="this.style.display='none'">
+                <div class="logo-text">
+                    <div class="logo-main-text">Indian Institute of Technology Bombay</div>
+                    <div class="logo-sub-text">📚 Academic Admin Dashboard</div>
+                </div>
+            </div>
+        </div>
         <div class="nav-links">
             <a href="admin_login.html?switch=1">Switch Department</a>
             <button class="btn-logout" onclick="logout()">Logout</button>

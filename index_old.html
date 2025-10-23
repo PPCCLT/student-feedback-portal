@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Feedback Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #1e5ba8;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.3s;
+            font-size: 14px;
+        }
+
+        .nav-links a:hover {
+            opacity: 0.8;
+        }
+
+        .btn-primary {
+            background: white;
+            color: #1e5ba8;
+            padding: 10px 25px;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .btn-primary:hover {
+            background: #f0f0f0;
+        }
+
+        .hero {
+            min-height: 60vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 100px 5% 0;
+            background: white;
+        }
+
+        .hero-content {
+            max-width: 900px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 42px;
+            margin-bottom: 20px;
+            color: #1e5ba8;
+            font-weight: 600;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 0;
+            line-height: 1.6;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #1e5ba8;
+            padding: 10px 25px;
+            border-radius: 5px;
+            text-decoration: none;
+            border: 2px solid #1e5ba8;
+            transition: all 0.3s;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .btn-secondary:hover {
+            background: #1e5ba8;
+            color: white;
+        }
+
+
+        .cta {
+            padding: 0 5% 80px;
+            background: white;
+            text-align: center;
+        }
+
+        .cta h2 {
+            font-size: 36px;
+            margin-bottom: 15px;
+            color: #1e5ba8;
+            font-weight: 600;
+        }
+
+        .cta p {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 15px;
+            margin-top: 0;
+        }
+
+        footer {
+            padding: 30px 5%;
+            background: #1e5ba8;
+            text-align: center;
+            color: white;
+        }
+
+        footer p {
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">Student Feedback Portal</div>
+        <div class="nav-links">
+            <a href="feedback.html">Submit Feedback</a>
+            <a href="track-feedback.html">Track Feedback</a>
+            <a href="#about">About</a>
+            <a href="#contact">Contact</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Student Feedback Portal</h1>
+            <p>A simple and secure platform for students to share their valuable feedback and help improve the quality of education at our institute.</p>
+        </div>
+    </section>
+
+    <section class="cta">
+        <h2>Ready to Make a Difference?</h2>
+        <p>Your feedback is valuable and helps us create a better learning environment for everyone.</p>
+        <div class="hero-buttons">
+            <a href="feedback.html" class="btn-primary">Submit Feedback</a>
+            <a href="track-feedback.html" class="btn-secondary">Track Feedback</a>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 Student Feedback Portal. All rights reserved.</p>
+    </footer>
+</body>
+</html>
