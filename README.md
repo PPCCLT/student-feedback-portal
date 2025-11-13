@@ -137,6 +137,97 @@ A comprehensive student feedback portal with department-specific admin access co
    - Students: `http://localhost:3000`
    - Admins: `http://localhost:3000/admin_login.html`
 
+## 🛠️ Developer Notes
+
+### Environment Variables
+
+- `PORT`: Server port (default: `3000`)
+- `CORS_ORIGIN`: Comma-separated allowed origins for CORS, e.g. `https://example.com,https://admin.example.com`
+- `JSON_BODY_LIMIT`: Max JSON size for requests (default: `100kb`)
+- `MAX_TEXT_LEN`: Max length for feedback `text` (default: `4000`)
+- `MAX_SUGGESTIONS_LEN`: Max length for `suggestions` (default: `2000`)
+- `MONGODB_URI`: Mongo connection string (default: `mongodb://127.0.0.1:27017`)
+- `MONGODB_DB`: Database name (default: `student_feedback_portal`)
+- `MONGODB_COLLECTION`: Collection name (default: `feedbacks`)
+
+### Admin Authentication (Server-Side)
+
+New endpoints:
+
+- `POST /api/login` – body: `{ "department": "Facilities", "password": "..." }`
+  - Returns `{ ok: true, token, department }` and also sets an HTTP-only cookie `admin_session`.
+- `POST /api/logout` – clears the session cookie.
+
+Use the token via `Authorization: Bearer <token>` or rely on the cookie from browsers. Admin-only endpoints now require authentication:
+
+- `PATCH /api/feedbacks/:id/status`
+- `PATCH /api/feedbacks/:id/resolve`
+- `DELETE /api/feedbacks/:id`
+
+Configure admin credentials and JWT secret with env vars:
+
+- `ADMIN_PASSWORDS_JSON` – JSON map of department to password. Example:
+  ```json
+  {"Super Admin":"superadmin123","Facilities":"facilities123","Academic":"academic123","Infrastructure":"infrastructure123","Events":"events123","General":"general123"}
+  ```
+- or individual envs: `ADMIN_PASSWORD_SUPER`, `ADMIN_PASSWORD_FACILITIES`, `ADMIN_PASSWORD_ACADEMIC`, `ADMIN_PASSWORD_INFRASTRUCTURE`, `ADMIN_PASSWORD_EVENTS`, `ADMIN_PASSWORD_GENERAL`
+- `ADMIN_JWT_SECRET` – secret for signing admin JWTs
+- `SESSION_COOKIE_NAME` – cookie name (default: `admin_session`)
+- `SESSION_TTL_SECONDS` – token/cookie lifetime (default: 86400)
+
+If using cookies from the browser, set:
+
+- `CORS_ORIGIN` to your site origin and ensure it’s accurate
+- Cookies are `SameSite=Lax` by default and `Secure` in production
+
+Example (PowerShell):
+
+```powershell
+$env:CORS_ORIGIN = "http://localhost:3000"
+$env:ADMIN_JWT_SECRET = "replace-me"
+$env:ADMIN_PASSWORDS_JSON = '{"Super Admin":"superadmin123","Facilities":"facilities123","Academic":"academic123","Infrastructure":"infrastructure123","Events":"events123","General":"general123"}'
+npm run dev
+```
+
+### MongoDB (Optional)
+
+When MongoDB is reachable via `MONGODB_URI`, the server uses it for storage with indexes on `id` and `createdAt`. If MongoDB is not available, it falls back to JSON file storage at `data/feedbacks.json` with a minimal write queue to reduce write conflicts under load.
+
+### API Pagination & Filters
+
+`GET /api/feedbacks` now supports:
+
+- `limit` (default 50, max 200)
+- `page` (default 1)
+- `status` (e.g., `pending|in-progress|resolved`)
+- `category` (e.g., `General`, `Facilities`)
+- `search` (case-insensitive search across `text` and `suggestions`)
+
+Response shape:
+
+```json
+{
+  "data": [ /* feedbacks */ ],
+  "pagination": { "total": 123, "page": 1, "limit": 50, "pages": 3 }
+}
+```
+
+### API Smoke Test
+
+Run a simple smoke test (requires server running):
+
+```bash
+npm run test:api
+# optionally set BASE_URL if not localhost:3000
+# BASE_URL=http://localhost:4000 npm run test:api
+```
+
+### Security & Next Steps
+
+- CORS is restricted via `CORS_ORIGIN` when set.
+- Basic input sanitization and size limits are enforced on create.
+- Recommended next step: Move admin credentials and auth checks to the server (e.g., add `/api/login` issuing tokens/cookies and guard admin-only endpoints). Frontend dashboards would call the login endpoint and include credentials on subsequent requests.
+
 ## 📊 **Benefits:**
 
 - **Organized Management**: Each department handles only relevant feedback

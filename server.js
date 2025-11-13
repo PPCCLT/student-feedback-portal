@@ -1,8 +1,11 @@
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import cookieParser from 'cookie-parser';
+import jwt from 'jsonwebtoken';
 import { nanoid } from 'nanoid';
 import { MongoClient } from 'mongodb';
 
@@ -26,14 +29,90 @@ function readAll() {
   }
 }
 
+// Minimal write queue to avoid concurrent file writes clobbering
+let fileWriteQueue = Promise.resolve();
 function writeAll(items) {
   ensureDataFile();
-  fs.writeFileSync(DATA_FILE, JSON.stringify(items, null, 2), 'utf-8');
+  fileWriteQueue = fileWriteQueue
+    .then(() => fs.promises.writeFile(DATA_FILE, JSON.stringify(items, null, 2), 'utf-8'))
+    .catch((err) => {
+      console.error('[file-write]', err);
+    });
+  return fileWriteQueue;
 }
 
 const app = express();
-app.use(cors());
-app.use(express.json());
+
+// CORS restriction via env: CORS_ORIGIN="https://example.com,https://admin.example.com"
+const corsOriginsEnv = process.env.CORS_ORIGIN || process.env.CORS_ORIGINS || '';
+const allowedOrigins = corsOriginsEnv
+  .split(',')
+  .map((s) => s.trim())
+  .filter(Boolean);
+app.use(
+  cors({
+    origin: allowedOrigins.length === 0 ? true : (origin, cb) => {
+      if (!origin) return cb(null, true); // allow same-origin / curl
+      return cb(null, allowedOrigins.includes(origin));
+    },
+    credentials: true
+  })
+);
+
+// Limit JSON payload size
+app.use(express.json({ limit: process.env.JSON_BODY_LIMIT || '100kb' }));
+app.use(cookieParser());
+
+// --- Admin authentication setup ---
+// Admin passwords via env: ADMIN_PASSWORDS_JSON,
+// e.g. {"Super Admin":"super","Facilities":"facilities123",...}
+// or flat envs like ADMIN_PASSWORD_SUPER, ADMIN_PASSWORD_FACILITIES, etc.
+function loadAdminPasswords() {
+  const fromJson = process.env.ADMIN_PASSWORDS_JSON ? safeParseJson(process.env.ADMIN_PASSWORDS_JSON) : null;
+  if (fromJson && typeof fromJson === 'object') return fromJson;
+  const map = {};
+  if (process.env.ADMIN_PASSWORD_SUPER) map['Super Admin'] = process.env.ADMIN_PASSWORD_SUPER;
+  if (process.env.ADMIN_PASSWORD_FACILITIES) map['Facilities'] = process.env.ADMIN_PASSWORD_FACILITIES;
+  if (process.env.ADMIN_PASSWORD_ACADEMIC) map['Academic'] = process.env.ADMIN_PASSWORD_ACADEMIC;
+  if (process.env.ADMIN_PASSWORD_INFRASTRUCTURE) map['Infrastructure'] = process.env.ADMIN_PASSWORD_INFRASTRUCTURE;
+  if (process.env.ADMIN_PASSWORD_EVENTS) map['Events'] = process.env.ADMIN_PASSWORD_EVENTS;
+  if (process.env.ADMIN_PASSWORD_GENERAL) map['General'] = process.env.ADMIN_PASSWORD_GENERAL;
+  return map;
+}
+
+function safeParseJson(s) {
+  try { return JSON.parse(s); } catch { return null; }
+}
+
+const ADMIN_JWT_SECRET = process.env.ADMIN_JWT_SECRET || 'dev-insecure-secret-change-me';
+const SESSION_COOKIE_NAME = process.env.SESSION_COOKIE_NAME || 'admin_session';
+const SESSION_TTL_SECONDS = Number(process.env.SESSION_TTL_SECONDS || 60 * 60 * 24); // 24h
+
+function signAdminToken(payload) {
+  return jwt.sign(payload, ADMIN_JWT_SECRET, { expiresIn: SESSION_TTL_SECONDS });
+}
+
+function authMiddleware(req, res, next) {
+  const header = req.headers.authorization || '';
+  let token = null;
+  if (header.startsWith('Bearer ')) token = header.slice('Bearer '.length);
+  if (!token && req.cookies && req.cookies[SESSION_COOKIE_NAME]) {
+    token = req.cookies[SESSION_COOKIE_NAME];
+  }
+  if (!token) return res.status(401).json({ error: 'Unauthorized' });
+  try {
+    const decoded = jwt.verify(token, ADMIN_JWT_SECRET);
+    req.admin = decoded;
+    return next();
+  } catch (e) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+}
+
+// Optional: simple role check in future
+function requireAdmin(req, res, next) {
+  return authMiddleware(req, res, next);
+}
 
 // Serve static files (HTML, CSS, JS)
 app.use(express.static(__dirname));
@@ -73,18 +152,76 @@ process.on('unhandledRejection', (reason) => {
 // Health check
 app.get('/health', (req, res) => res.json({ ok: true }));
 
-// List feedbacks
+// Admin login
+app.post('/api/login', (req, res) => {
+  const { department, password } = req.body || {};
+  if (!department || !password) return res.status(400).json({ error: 'department and password are required' });
+  const passwords = loadAdminPasswords();
+  const expected = passwords[department];
+  if (!expected || String(expected) !== String(password)) return res.status(401).json({ error: 'Invalid credentials' });
+  const token = signAdminToken({ department });
+  // Set httpOnly cookie for browser clients; also return token for programmatic use
+  res.cookie(SESSION_COOKIE_NAME, token, {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: Boolean(process.env.COOKIE_SECURE || process.env.NODE_ENV === 'production'),
+    maxAge: SESSION_TTL_SECONDS * 1000
+  });
+  return res.json({ ok: true, token, department });
+});
+
+// Admin logout
+app.post('/api/logout', (req, res) => {
+  res.clearCookie(SESSION_COOKIE_NAME);
+  res.json({ ok: true });
+});
+
+// Helpers for pagination and filtering
+function parsePositiveInt(value, fallback) {
+  const n = Number(value);
+  if (!Number.isFinite(n) || n <= 0) return fallback;
+  return Math.floor(n);
+}
+
+// List feedbacks (with pagination and filters)
+// Query params: limit, page, status, category, search
 app.get('/api/feedbacks', async (req, res, next) => {
   try {
+    const limit = Math.min(parsePositiveInt(req.query.limit, 50), 200);
+    const page = parsePositiveInt(req.query.page, 1);
+    const skip = (page - 1) * limit;
+    const status = req.query.status ? String(req.query.status).trim() : undefined;
+    const category = req.query.category ? String(req.query.category).trim() : undefined;
+    const search = req.query.search ? String(req.query.search).trim() : undefined;
+
     if (feedbacksCollection) {
-      const items = await feedbacksCollection
-        .find({})
-        .sort({ createdAt: -1 })
-        .toArray();
-      return res.json(items);
+      const mongoQuery = {};
+      if (status) mongoQuery.status = status;
+      if (category) mongoQuery.category = category;
+      if (search) {
+        mongoQuery.$or = [
+          { text: { $regex: search, $options: 'i' } },
+          { suggestions: { $regex: search, $options: 'i' } }
+        ];
+      }
+      const cursor = feedbacksCollection.find(mongoQuery).sort({ createdAt: -1 }).skip(skip).limit(limit);
+      const [items, total] = await Promise.all([cursor.toArray(), feedbacksCollection.countDocuments(mongoQuery)]);
+      return res.json({ data: items, pagination: { total, page, limit, pages: Math.ceil(total / limit) } });
     }
-    const items = readAll();
-    res.json(items);
+
+    const allItems = readAll();
+    let filtered = allItems;
+    if (status) filtered = filtered.filter((f) => f.status === status);
+    if (category) filtered = filtered.filter((f) => f.category === category);
+    if (search) {
+      const s = search.toLowerCase();
+      filtered = filtered.filter((f) =>
+        (f.text && f.text.toLowerCase().includes(s)) || (f.suggestions && f.suggestions.toLowerCase().includes(s))
+      );
+    }
+    const total = filtered.length;
+    const slice = filtered.sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1)).slice(skip, skip + limit);
+    res.json({ data: slice, pagination: { total, page, limit, pages: Math.ceil(total / limit) } });
   } catch (err) {
     next(err);
   }
@@ -98,19 +235,23 @@ app.post('/api/feedbacks', async (req, res, next) => {
   }
   try {
     const now = new Date();
+    const maxTextLen = Number(process.env.MAX_TEXT_LEN || 4000);
+    const maxSuggestionsLen = Number(process.env.MAX_SUGGESTIONS_LEN || 2000);
+    const maxNameLen = 200;
+    const maxShortLen = 100;
     const item = {
       id: `FB-${nanoid(8)}`,
       category,
-      subcategory: String(subcategory).trim(),
-      text: String(text).trim(),
+      subcategory: String(subcategory).trim().slice(0, maxShortLen),
+      text: String(text).trim().slice(0, maxTextLen),
       urgency,
       // Optional free-text suggestions from the student
-      ...(suggestions ? { suggestions: String(suggestions).trim() } : {}),
+      ...(suggestions ? { suggestions: String(suggestions).trim().slice(0, maxSuggestionsLen) } : {}),
       // Optional student fields (only stored if provided)
-      ...(studentName ? { studentName: String(studentName).trim() } : {}),
-      ...(rollNo ? { rollNo: String(rollNo).trim() } : {}),
-      ...(department ? { department: String(department).trim() } : {}),
-      ...(courseNo ? { courseNo: String(courseNo).trim() } : {}),
+      ...(studentName ? { studentName: String(studentName).trim().slice(0, maxNameLen) } : {}),
+      ...(rollNo ? { rollNo: String(rollNo).trim().slice(0, maxShortLen) } : {}),
+      ...(department ? { department: String(department).trim().slice(0, maxShortLen) } : {}),
+      ...(courseNo ? { courseNo: String(courseNo).trim().slice(0, maxShortLen) } : {}),
       status: 'pending',
       createdAt: now.toISOString(),
       createdAtDisplay: new Intl.DateTimeFormat(undefined, {
@@ -125,7 +266,7 @@ app.post('/api/feedbacks', async (req, res, next) => {
 
     const items = readAll();
     items.unshift(item);
-    writeAll(items);
+    await writeAll(items);
     res.status(201).json(item);
   } catch (err) {
     next(err);
@@ -151,7 +292,7 @@ app.get('/api/feedbacks/:id', async (req, res, next) => {
 });
 
 // Update feedback status
-app.patch('/api/feedbacks/:id/status', async (req, res, next) => {
+app.patch('/api/feedbacks/:id/status', requireAdmin, async (req, res, next) => {
   try {
     const id = req.params.id;
     const { status, adminComment } = req.body;
@@ -187,7 +328,7 @@ app.patch('/api/feedbacks/:id/status', async (req, res, next) => {
     if (idx === -1) return res.status(404).json({ error: 'Not found' });
     
     Object.assign(items[idx], updateData);
-    writeAll(items);
+    await writeAll(items);
     res.json(items[idx]);
   } catch (err) {
     next(err);
@@ -195,7 +336,7 @@ app.patch('/api/feedbacks/:id/status', async (req, res, next) => {
 });
 
 // Resolve feedback (legacy endpoint for backward compatibility)
-app.patch('/api/feedbacks/:id/resolve', async (req, res, next) => {
+app.patch('/api/feedbacks/:id/resolve', requireAdmin, async (req, res, next) => {
   try {
     const id = req.params.id;
     if (feedbacksCollection) {
@@ -211,7 +352,7 @@ app.patch('/api/feedbacks/:id/resolve', async (req, res, next) => {
     const idx = items.findIndex(f => f.id === id);
     if (idx === -1) return res.status(404).json({ error: 'Not found' });
     items[idx].status = 'resolved';
-    writeAll(items);
+    await writeAll(items);
     res.json(items[idx]);
   } catch (err) {
     next(err);
@@ -219,7 +360,7 @@ app.patch('/api/feedbacks/:id/resolve', async (req, res, next) => {
 });
 
 // Delete feedback
-app.delete('/api/feedbacks/:id', async (req, res, next) => {
+app.delete('/api/feedbacks/:id', requireAdmin, async (req, res, next) => {
   try {
     const id = req.params.id;
     if (feedbacksCollection) {
@@ -230,7 +371,7 @@ app.delete('/api/feedbacks/:id', async (req, res, next) => {
     const items = readAll();
     const nextItems = items.filter(f => f.id !== id);
     if (nextItems.length === items.length) return res.status(404).json({ error: 'Not found' });
-    writeAll(nextItems);
+    await writeAll(nextItems);
     res.status(204).send();
   } catch (err) {
     next(err);

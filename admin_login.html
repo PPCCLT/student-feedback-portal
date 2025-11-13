@@ -416,42 +416,42 @@
         <!-- Department Selection -->
         <div id="departmentSelection">
             <div class="department-grid">
-                <div class="department-card" data-dept="super" data-password="superadmin123" data-icon="🔧" data-title="Super Admin" data-desc="Full access to all feedback">
+                <div class="department-card" data-dept="super" data-icon="🔧" data-title="Super Admin" data-desc="Full access to all feedback">
                     <div class="department-icon">🔧</div>
                     <h3>Super Admin</h3>
                     <p>Full access to all feedback categories and admin management</p>
                     <span class="badge">All Departments</span>
                 </div>
 
-                <div class="department-card" data-dept="facilities" data-password="facilities123" data-icon="🏢" data-title="Facilities Admin" data-desc="Facilities & Infrastructure">
+                <div class="department-card" data-dept="facilities" data-icon="🏢" data-title="Facilities Admin" data-desc="Facilities & Infrastructure">
                     <div class="department-icon">🏢</div>
                     <h3>Facilities Admin</h3>
                     <p>Manages facilities-related feedback</p>
                     <span class="badge">Facilities</span>
                 </div>
 
-                <div class="department-card" data-dept="lectures" data-password="academic123" data-icon="📚" data-title="Academic Admin" data-desc="Teaching & Courses">
+                <div class="department-card" data-dept="lectures" data-icon="📚" data-title="Academic Admin" data-desc="Teaching & Courses">
                     <div class="department-icon">📚</div>
                     <h3>Academic Admin</h3>
                     <p>Manages academic and teaching feedback</p>
                     <span class="badge">Lectures</span>
                 </div>
 
-                <div class="department-card" data-dept="classrooms" data-password="infrastructure123" data-icon="🏫" data-title="Infrastructure Admin" data-desc="Classrooms & Equipment">
+                <div class="department-card" data-dept="classrooms" data-icon="🏫" data-title="Infrastructure Admin" data-desc="Classrooms & Equipment">
                     <div class="department-icon">🏫</div>
                     <h3>Infrastructure Admin</h3>
                     <p>Manages classroom infrastructure feedback</p>
                     <span class="badge">Classrooms</span>
                 </div>
 
-                <div class="department-card" data-dept="events" data-password="events123" data-icon="🎉" data-title="Events Admin" data-desc="Events & Activities">
+                <div class="department-card" data-dept="events" data-icon="🎉" data-title="Events Admin" data-desc="Events & Activities">
                     <div class="department-icon">🎉</div>
                     <h3>Events Admin</h3>
                     <p>Manages events and activities feedback</p>
                     <span class="badge">Events</span>
                 </div>
 
-                <div class="department-card" data-dept="general" data-password="general123" data-icon="📋" data-title="General Admin" data-desc="General Feedback">
+                <div class="department-card" data-dept="general" data-icon="📋" data-title="General Admin" data-desc="General Feedback">
                     <div class="department-icon">📋</div>
                     <h3>General Admin</h3>
                     <p>Manages general feedback and suggestions</p>
@@ -517,14 +517,12 @@
             const selectedDesc = document.getElementById('selectedDesc');
 
             let currentDepartment = null;
-            let correctPassword = null;
 
             // Handle department card selection
             departmentCards.forEach(card => {
                 card.addEventListener('click', function() {
                     // Get department info
                     currentDepartment = this.dataset.dept;
-                    correctPassword = this.dataset.password;
                     
                     const icon = this.dataset.icon;
                     const title = this.dataset.title;
@@ -564,32 +562,47 @@
             loginForm.addEventListener('submit', function(e) {
                 e.preventDefault();
                 // Ensure a department was selected
-                if (!currentDepartment || !correctPassword) {
+                if (!currentDepartment) {
                     showAlert('Please select a department first.', 'error');
                     return;
                 }
 
                 const enteredPassword = passwordInput.value.trim();
 
-                if (enteredPassword !== correctPassword) {
-                    showAlert('Incorrect password. Please try again.', 'error');
-                    passwordInput.value = '';
-                    passwordInput.focus();
-                    return;
-                }
+                // Map UI dept value to server department name
+                const deptMap = {
+                    super: 'Super Admin',
+                    facilities: 'Facilities',
+                    lectures: 'Academic',
+                    classrooms: 'Infrastructure',
+                    events: 'Events',
+                    general: 'General'
+                };
+                const departmentName = deptMap[currentDepartment];
 
-                // Store login info
-                sessionStorage.setItem('adminDept', currentDepartment);
-                sessionStorage.setItem('adminLoginTime', Date.now().toString());
-
-                showAlert('Login successful! Redirecting...', 'success');
-
-                // Disable button
                 btnLogin.disabled = true;
-                btnLogin.textContent = 'Redirecting...';
+                btnLogin.textContent = 'Signing in...';
 
-                // Redirect based on department
-                setTimeout(() => {
+                fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ department: departmentName, password: enteredPassword })
+                })
+                .then(async (res) => {
+                    if (!res.ok) {
+                        const data = await res.json().catch(() => ({}));
+                        throw new Error(data.error || 'Login failed');
+                    }
+                    return res.json();
+                })
+                .then(() => {
+                    // Store department for UI convenience (not for auth)
+                    sessionStorage.setItem('adminDept', currentDepartment);
+                    sessionStorage.setItem('adminLoginTime', Date.now().toString());
+                    showAlert('Login successful! Redirecting...', 'success');
+
+                    btnLogin.textContent = 'Redirecting...';
                     const redirectMap = {
                         super: 'admin_dashboard.html',
                         facilities: 'admin_facilities.html',
@@ -598,8 +611,17 @@
                         events: 'admin_events.html',
                         general: 'admin_general.html'
                     };
-                    window.location.href = redirectMap[currentDepartment] || 'admin_dashboard.html';
-                }, 1500);
+                    setTimeout(() => {
+                        window.location.href = redirectMap[currentDepartment] || 'admin_dashboard.html';
+                    }, 800);
+                })
+                .catch((err) => {
+                    showAlert(err.message || 'Login failed', 'error');
+                    btnLogin.disabled = false;
+                    btnLogin.textContent = 'Login →';
+                    passwordInput.value = '';
+                    passwordInput.focus();
+                });
             });
 
             function showAlert(message, type) {

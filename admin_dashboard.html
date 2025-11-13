@@ -127,9 +127,10 @@
 
             async function load() {
                 try {
-                    const res = await fetch('http://localhost:3000/api/feedbacks');
+                    const res = await fetch('/api/feedbacks');
                     if (!res.ok) throw new Error('API error');
-                    feedbacks = await res.json();
+                    const json = await res.json();
+                    feedbacks = Array.isArray(json) ? json : (json && json.data) || [];
                     // Ensure newest first
                     feedbacks.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                     try { localStorage.setItem('feedbacks', JSON.stringify(feedbacks)); } catch (_) {}
@@ -301,7 +302,7 @@
 
             async function onResolve(id) {
                 try {
-                    const res = await fetch(`http://localhost:3000/api/feedbacks/${encodeURIComponent(id)}/resolve`, { method: 'PATCH' });
+                    const res = await fetch(`/api/feedbacks/${encodeURIComponent(id)}/resolve`, { method: 'PATCH', credentials: 'include' });
                     if (!res.ok) throw new Error('API error');
                     const updated = await res.json();
                     const idx = feedbacks.findIndex(f => f.id === id);
@@ -322,7 +323,7 @@
             async function onDelete(id) {
                 if (!confirm('Are you sure you want to delete this feedback?')) return;
                 try {
-                    const res = await fetch(`http://localhost:3000/api/feedbacks/${encodeURIComponent(id)}`, { method: 'DELETE' });
+                    const res = await fetch(`/api/feedbacks/${encodeURIComponent(id)}`, { method: 'DELETE', credentials: 'include' });
                     if (!res.ok && res.status !== 204) throw new Error('API error');
                 } catch (_) { /* ignore */ }
                 feedbacks = feedbacks.filter(f => f.id !== id);

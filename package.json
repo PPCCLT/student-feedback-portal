@@ -5,11 +5,15 @@
   "type": "module",
   "scripts": {
     "start": "node server.js",
-    "dev": "node server.js"
+    "dev": "node server.js",
+    "test:api": "node tests/api-smoke.mjs"
   },
   "dependencies": {
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
     "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.20.0",
     "nanoid": "^5.0.7"
   }
