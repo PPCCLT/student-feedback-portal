@@ -474,7 +474,7 @@
 
             async function load() {
                 try {
-                    const res = await fetch('/api/feedbacks');
+                    const res = await fetch('/api/feedbacks?limit=20&page=1');
                     if (!res.ok) throw new Error('API error');
                     const json = await res.json();
                     const allFeedbacks = Array.isArray(json) ? json : (json && json.data) || [];

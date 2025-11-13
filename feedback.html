@@ -638,8 +638,21 @@
                 createdAt: new Date().toISOString()
             };
 
+            const submitBtn = document.querySelector('.btn-submit');
+            const originalBtnText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+
+            // Generate a temporary ID and show the modal immediately
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-';
+            let tempId = 'FB-';
+            for (let i = 0; i < 8; i++) { tempId += chars.charAt(Math.floor(Math.random() * chars.length)); }
+            document.getElementById('feedbackIdSpan').textContent = tempId;
+            const trackBtn = document.getElementById('trackFeedbackBtn');
+            trackBtn.href = `track-feedback.html?id=${tempId}`;
+            successModal.classList.add('active');
+
             try {
-                // Try to send to API
                 const response = await fetch('/api/feedbacks', {
                     method: 'POST',
                     headers: {
@@ -650,39 +663,29 @@
 
                 if (response.ok) {
                     const result = await response.json();
-                    showSuccessModal(result.id);
+                    document.getElementById('feedbackIdSpan').textContent = result.id;
+                    document.getElementById('trackFeedbackBtn').href = `track-feedback.html?id=${result.id}`;
                     feedbackForm.reset();
                 } else {
                     throw new Error('API error');
                 }
             } catch (error) {
                 // Fallback: Save to localStorage
-                console.log('Saving to localStorage');
                 const feedbacks = JSON.parse(localStorage.getItem('feedbacks') || '[]');
-                // Generate ID similar to server format for consistency
-                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-';
-                let id = 'FB-';
-                for (let i = 0; i < 8; i++) {
-                    id += chars.charAt(Math.floor(Math.random() * chars.length));
-                }
-                formData.id = id;
+                formData.id = tempId;
                 formData.status = 'pending';
                 feedbacks.push(formData);
                 localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
-                
-                showSuccessModal(formData.id);
                 feedbackForm.reset();
             }
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalBtnText;
         });
 
         function showSuccessModal(feedbackId) {
-            // Update the tracking ID display
             document.getElementById('feedbackIdSpan').textContent = feedbackId;
-            
-            // Update the track feedback button link
             const trackBtn = document.getElementById('trackFeedbackBtn');
             trackBtn.href = `track-feedback.html?id=${feedbackId}`;
-            
             successModal.classList.add('active');
         }
 

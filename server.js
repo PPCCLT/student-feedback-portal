@@ -8,6 +8,7 @@ import cookieParser from 'cookie-parser';
 import jwt from 'jsonwebtoken';
 import { nanoid } from 'nanoid';
 import { MongoClient } from 'mongodb';
+import compression from 'compression';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -62,6 +63,7 @@ app.use(
 // Limit JSON payload size
 app.use(express.json({ limit: process.env.JSON_BODY_LIMIT || '100kb' }));
 app.use(cookieParser());
+app.use(compression());
 
 // --- Admin authentication setup ---
 // Admin passwords via env: ADMIN_PASSWORDS_JSON,
@@ -114,8 +116,21 @@ function requireAdmin(req, res, next) {
   return authMiddleware(req, res, next);
 }
 
-// Serve static files (HTML, CSS, JS)
-app.use(express.static(__dirname));
+// Serve static files (HTML, CSS, JS) with caching for assets
+app.use(
+  express.static(__dirname, {
+    setHeaders: (res, filePath) => {
+      const ext = path.extname(filePath).toLowerCase();
+      const longCache = 'public, max-age=' + (60 * 60 * 24 * 30); // 30 days
+      const noCache = 'no-cache';
+      if (['.js', '.css', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp', '.ico'].includes(ext)) {
+        res.setHeader('Cache-Control', longCache);
+      } else if (ext === '.html') {
+        res.setHeader('Cache-Control', noCache);
+      }
+    }
+  })
+);
 
 // MongoDB setup (optional). If not available, fallback to JSON file.
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017';
