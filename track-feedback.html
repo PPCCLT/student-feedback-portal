@@ -521,7 +521,7 @@
 
             try {
                 // Try to fetch from API first
-                const response = await fetch(`http://localhost:3000/api/feedbacks/${feedbackId}`);
+                const response = await fetch(`http://localhost:4000/api/feedbacks/${feedbackId}`);
                 
                 if (response.ok) {
                     const feedback = await response.json();
@@ -541,7 +541,7 @@
                 }
             } catch (error) {
                 // Fallback to localStorage
-                console.log('Falling back to localStorage');
+                console.log('API Error:', error.message, '\nFalling back to localStorage');
                 const feedbacks = JSON.parse(localStorage.getItem('feedbacks') || '[]');
                 const feedback = feedbacks.find(f => f.id === feedbackId);
                 
