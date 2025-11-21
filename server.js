@@ -170,11 +170,31 @@ app.get('/health', (req, res) => res.json({ ok: true }));
 // Admin login
 app.post('/api/login', (req, res) => {
   const { department, password } = req.body || {};
-  if (!department || !password) return res.status(400).json({ error: 'department and password are required' });
+  console.log('Login attempt for department:', department);
+  
+  if (!department || !password) {
+    console.log('Missing department or password');
+    return res.status(400).json({ error: 'Department and password are required' });
+  }
+  
   const passwords = loadAdminPasswords();
+  console.log('Available departments:', Object.keys(passwords));
+  console.log('Expected password for', department, ':', passwords[department] ? '***' : 'Not found');
+  
   const expected = passwords[department];
-  if (!expected || String(expected) !== String(password)) return res.status(401).json({ error: 'Invalid credentials' });
+  if (!expected) {
+    console.log('Department not found in passwords');
+    return res.status(401).json({ error: 'Invalid department' });
+  }
+  
+  if (String(expected) !== String(password)) {
+    console.log('Password mismatch');
+    return res.status(401).json({ error: 'Invalid password' });
+  }
+  
+  console.log('Login successful for department:', department);
   const token = signAdminToken({ department });
+  
   // Set httpOnly cookie for browser clients; also return token for programmatic use
   res.cookie(SESSION_COOKIE_NAME, token, {
     httpOnly: true,
@@ -182,6 +202,7 @@ app.post('/api/login', (req, res) => {
     secure: Boolean(process.env.COOKIE_SECURE || process.env.NODE_ENV === 'production'),
     maxAge: SESSION_TTL_SECONDS * 1000
   });
+  
   return res.json({ ok: true, token, department });
 });
 
