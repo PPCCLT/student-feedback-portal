@@ -44,21 +44,16 @@ function writeAll(items) {
 
 const app = express();
 
-// CORS restriction via env: CORS_ORIGIN="https://example.com,https://admin.example.com"
-const corsOriginsEnv = process.env.CORS_ORIGIN || process.env.CORS_ORIGINS || '';
-const allowedOrigins = corsOriginsEnv
-  .split(',')
-  .map((s) => s.trim())
-  .filter(Boolean);
-app.use(
-  cors({
-    origin: allowedOrigins.length === 0 ? true : (origin, cb) => {
-      if (!origin) return cb(null, true); // allow same-origin / curl
-      return cb(null, allowedOrigins.includes(origin));
-    },
-    credentials: true
-  })
-);
+// CORS configuration
+app.use(cors({
+  origin: ['http://localhost:4000', 'http://127.0.0.1:4000', 'http://localhost:3000', 'http://127.0.0.1:3000'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+}));
+
+// Handle preflight requests
+app.options('*', cors());
 
 // Limit JSON payload size
 app.use(express.json({ limit: process.env.JSON_BODY_LIMIT || '100kb' }));
@@ -70,15 +65,29 @@ app.use(compression());
 // e.g. {"Super Admin":"super","Facilities":"facilities123",...}
 // or flat envs like ADMIN_PASSWORD_SUPER, ADMIN_PASSWORD_FACILITIES, etc.
 function loadAdminPasswords() {
+  // First check for environment variables
   const fromJson = process.env.ADMIN_PASSWORDS_JSON ? safeParseJson(process.env.ADMIN_PASSWORDS_JSON) : null;
   if (fromJson && typeof fromJson === 'object') return fromJson;
-  const map = {};
+  
+  // Default passwords (for development only)
+  const map = {
+    'Super Admin': 'superadmin123',
+    'Facilities': 'facilities123',
+    'Academic': 'academic123',
+    'Infrastructure': 'infrastructure123',
+    'Events': 'events123',
+    'General': 'general123'
+  };
+
+  // Override with any environment variables if they exist
   if (process.env.ADMIN_PASSWORD_SUPER) map['Super Admin'] = process.env.ADMIN_PASSWORD_SUPER;
   if (process.env.ADMIN_PASSWORD_FACILITIES) map['Facilities'] = process.env.ADMIN_PASSWORD_FACILITIES;
   if (process.env.ADMIN_PASSWORD_ACADEMIC) map['Academic'] = process.env.ADMIN_PASSWORD_ACADEMIC;
   if (process.env.ADMIN_PASSWORD_INFRASTRUCTURE) map['Infrastructure'] = process.env.ADMIN_PASSWORD_INFRASTRUCTURE;
   if (process.env.ADMIN_PASSWORD_EVENTS) map['Events'] = process.env.ADMIN_PASSWORD_EVENTS;
   if (process.env.ADMIN_PASSWORD_GENERAL) map['General'] = process.env.ADMIN_PASSWORD_GENERAL;
+
+  console.log('Loaded admin passwords for departments:', Object.keys(map));
   return map;
 }
 

@@ -569,32 +569,49 @@
 
                 const enteredPassword = passwordInput.value.trim();
 
-                // Map UI dept value to server department name
+                // Map UI dept value to server department name (must match server expectations)
                 const deptMap = {
-                    super: 'Super Admin',
-                    facilities: 'Facilities',
-                    lectures: 'Academic',
-                    classrooms: 'Infrastructure',
-                    events: 'Events',
-                    general: 'General'
+                    'super': 'Super Admin',       // For Super Admin
+                    'facilities': 'Facilities',   // For Facilities Admin
+                    'lectures': 'Academic',       // For Academic Admin
+                    'classrooms': 'Infrastructure', // For Infrastructure Admin
+                    'events': 'Events',           // For Events Admin
+                    'general': 'General'          // For General Admin
                 };
+                
                 const departmentName = deptMap[currentDepartment];
+                console.log('Logging in as:', departmentName, 'with department key:', currentDepartment);
 
                 btnLogin.disabled = true;
                 btnLogin.textContent = 'Signing in...';
 
-                fetch('/api/login', {
+                // Use the full URL with the correct port
+                const apiUrl = window.location.origin.includes('3000') 
+                    ? 'http://localhost:4000/api/login' 
+                    : '/api/login';
+                
+                console.log('Making login request to:', apiUrl);
+                
+                fetch(apiUrl, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
                     credentials: 'include',
-                    body: JSON.stringify({ department: departmentName, password: enteredPassword })
+                    body: JSON.stringify({ 
+                        department: departmentName, 
+                        password: enteredPassword 
+                    })
                 })
-                .then(async (res) => {
-                    if (!res.ok) {
-                        const data = await res.json().catch(() => ({}));
-                        throw new Error(data.error || 'Login failed');
+                .then(async (response) => {
+                    console.log('Login response status:', response.status);
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({}));
+                        console.error('Login error response:', errorData);
+                        throw new Error(errorData.error || `Login failed with status ${response.status}`);
                     }
-                    return res.json();
+                    return response.json();
                 })
                 .then(() => {
                     // Store department for UI convenience (not for auth)
