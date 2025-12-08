@@ -173,8 +173,11 @@ app.use(
   })
 );
 
+// Load environment variables from .env file
+import 'dotenv/config';
+
 // MongoDB setup (optional). If not available, fallback to JSON file.
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/student_feedback_portal';
 const MONGODB_DB = process.env.MONGODB_DB || 'student_feedback_portal';
 const MONGODB_COLLECTION = process.env.MONGODB_COLLECTION || 'feedbacks';
 

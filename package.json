@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js",
+    "start": "node -r dotenv/config server.js",
+    "dev": "nodemon -r dotenv/config server.js",
     "test:api": "node tests/api-smoke.mjs"
   },
   "dependencies": {
@@ -17,5 +17,8 @@
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.20.0",
     "nanoid": "^5.0.7"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
   }
 }
