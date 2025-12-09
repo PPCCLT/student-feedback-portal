@@ -110,7 +110,15 @@ app.use(compression());
 // or flat envs like ADMIN_PASSWORD_SUPER, ADMIN_PASSWORD_FACILITIES, etc.
 function loadAdminPasswords() {
   // First check for environment variables
-  const fromJson = process.env.ADMIN_PASSWORDS_JSON ? safeParseJson(process.env.ADMIN_PASSWORDS_JSON) : null;
+  // First check for environment variables
+  let fromJson = null;
+  if (process.env.ADMIN_PASSWORDS_JSON) {
+    fromJson = safeParseJson(process.env.ADMIN_PASSWORDS_JSON);
+    if (!fromJson) {
+      console.warn('Failed to parse ADMIN_PASSWORDS_JSON, ignoring.');
+    }
+  }
+
   if (fromJson && typeof fromJson === 'object') return fromJson;
 
   // Default passwords (for development only)
@@ -124,15 +132,23 @@ function loadAdminPasswords() {
   };
 
   // Override with any environment variables if they exist
-  if (process.env.ADMIN_PASSWORD_SUPER) map['Super Admin'] = process.env.ADMIN_PASSWORD_SUPER;
-  if (process.env.ADMIN_PASSWORD_FACILITIES) map['Facilities'] = process.env.ADMIN_PASSWORD_FACILITIES;
-  if (process.env.ADMIN_PASSWORD_ACADEMIC) map['Academic'] = process.env.ADMIN_PASSWORD_ACADEMIC;
-  if (process.env.ADMIN_PASSWORD_INFRASTRUCTURE) map['Infrastructure'] = process.env.ADMIN_PASSWORD_INFRASTRUCTURE;
-  if (process.env.ADMIN_PASSWORD_EVENTS) map['Events'] = process.env.ADMIN_PASSWORD_EVENTS;
-  if (process.env.ADMIN_PASSWORD_GENERAL) map['General'] = process.env.ADMIN_PASSWORD_GENERAL;
+  try {
+    if (process.env.ADMIN_PASSWORD_SUPER) map['Super Admin'] = process.env.ADMIN_PASSWORD_SUPER;
+    if (process.env.ADMIN_PASSWORD_FACILITIES) map['Facilities'] = process.env.ADMIN_PASSWORD_FACILITIES;
+    if (process.env.ADMIN_PASSWORD_ACADEMIC) map['Academic'] = process.env.ADMIN_PASSWORD_ACADEMIC;
+    if (process.env.ADMIN_PASSWORD_INFRASTRUCTURE) map['Infrastructure'] = process.env.ADMIN_PASSWORD_INFRASTRUCTURE;
+    if (process.env.ADMIN_PASSWORD_EVENTS) map['Events'] = process.env.ADMIN_PASSWORD_EVENTS;
+    if (process.env.ADMIN_PASSWORD_GENERAL) map['General'] = process.env.ADMIN_PASSWORD_GENERAL;
+  } catch (e) {
+    console.error('Error loading admin passwords from env:', e);
+  }
 
   console.log('Loaded admin passwords for departments:', Object.keys(map));
   return map;
+}
+
+console.log('Loaded admin passwords for departments:', Object.keys(map));
+return map;
 }
 
 function safeParseJson(s) {
@@ -141,7 +157,10 @@ function safeParseJson(s) {
 
 const ADMIN_JWT_SECRET = process.env.ADMIN_JWT_SECRET || 'dev-insecure-secret-change-me';
 const SESSION_COOKIE_NAME = process.env.SESSION_COOKIE_NAME || 'admin_session';
-const SESSION_TTL_SECONDS = Number(process.env.SESSION_TTL_SECONDS || 60 * 60 * 24); // 24h
+const SESSION_TTL_SECONDS = (() => {
+  const val = Number(process.env.SESSION_TTL_SECONDS);
+  return (Number.isFinite(val) && val > 0) ? val : 60 * 60 * 24; // Default 24h
+})();
 
 function signAdminToken(payload) {
   return jwt.sign(payload, ADMIN_JWT_SECRET, { expiresIn: SESSION_TTL_SECONDS });
