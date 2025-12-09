@@ -58,7 +58,7 @@ const corsOptions = {
     // Check for exact matches, .onrender.com subdomains, or any localhost port
     if (
       allowedOrigins.includes(origin) ||
-      origin.endsWith('.onrender.com') ||
+      origin.includes('.onrender.com') || // Relaxed check to avoid issues with protocol/slashes
       /^http:\/\/localhost:\d+$/.test(origin) ||
       /^http:\/\/127\.0\.0\.1:\d+$/.test(origin)
     ) {
