@@ -147,9 +147,7 @@ function loadAdminPasswords() {
   return map;
 }
 
-console.log('Loaded admin passwords for departments:', Object.keys(map));
-return map;
-}
+
 
 function safeParseJson(s) {
   try { return JSON.parse(s); } catch { return null; }
