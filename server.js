@@ -50,20 +50,24 @@ const corsOptions = {
   origin: function (origin, callback) {
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
-    
+
     const allowedOrigins = [
       'https://student-feedback-portal-2nn6.onrender.com',
-      'http://localhost:3000',
-      'http://localhost:4000',
-      'http://127.0.0.1:3000',
-      'http://127.0.0.1:4000'
     ];
-    
-    if (allowedOrigins.includes(origin) || origin.endsWith('.onrender.com')) {
+
+    // Check for exact matches, .onrender.com subdomains, or any localhost port
+    if (
+      allowedOrigins.includes(origin) ||
+      origin.endsWith('.onrender.com') ||
+      /^http:\/\/localhost:\d+$/.test(origin) ||
+      /^http:\/\/127\.0\.0\.1:\d+$/.test(origin)
+    ) {
       callback(null, true);
     } else {
       console.warn('CORS blocked request from origin:', origin);
-      callback(new Error('Not allowed by CORS'));
+      const err = new Error('Not allowed by CORS');
+      err.status = 403; // forbidden
+      callback(err);
     }
   },
   credentials: true,
@@ -85,12 +89,12 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Credentials', 'true');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
-  
+
   // Handle preflight
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
-  
+
   next();
 });
 
@@ -108,7 +112,7 @@ function loadAdminPasswords() {
   // First check for environment variables
   const fromJson = process.env.ADMIN_PASSWORDS_JSON ? safeParseJson(process.env.ADMIN_PASSWORDS_JSON) : null;
   if (fromJson && typeof fromJson === 'object') return fromJson;
-  
+
   // Default passwords (for development only)
   const map = {
     'Super Admin': 'superadmin123',
@@ -229,30 +233,30 @@ app.options('/api/login', cors(corsOptions), (req, res) => {
 app.post('/api/login', cors(corsOptions), (req, res) => {
   const { department, password } = req.body || {};
   console.log('Login attempt for department:', department);
-  
+
   if (!department || !password) {
     console.log('Missing department or password');
     return res.status(400).json({ error: 'Department and password are required' });
   }
-  
+
   const passwords = loadAdminPasswords();
   console.log('Available departments:', Object.keys(passwords));
   console.log('Expected password for', department, ':', passwords[department] ? '***' : 'Not found');
-  
+
   const expected = passwords[department];
   if (!expected) {
     console.log('Department not found in passwords');
     return res.status(401).json({ error: 'Invalid department' });
   }
-  
+
   if (String(expected) !== String(password)) {
     console.log('Password mismatch');
     return res.status(401).json({ error: 'Invalid password' });
   }
-  
+
   console.log('Login successful for department:', department);
   const token = signAdminToken({ department });
-  
+
   // Set httpOnly cookie for browser clients; also return token for programmatic use
   res.cookie(SESSION_COOKIE_NAME, token, {
     httpOnly: true,
@@ -260,7 +264,7 @@ app.post('/api/login', cors(corsOptions), (req, res) => {
     secure: Boolean(process.env.COOKIE_SECURE || process.env.NODE_ENV === 'production'),
     maxAge: SESSION_TTL_SECONDS * 1000
   });
-  
+
   return res.json({ ok: true, token, department });
 });
 
@@ -390,12 +394,12 @@ app.patch('/api/feedbacks/:id/status', requireAdmin, async (req, res, next) => {
   try {
     const id = req.params.id;
     const { status, adminComment } = req.body;
-    
+
     if (!status || !['pending', 'in-progress', 'resolved'].includes(status)) {
       return res.status(400).json({ error: 'Invalid status. Must be pending, in-progress, or resolved' });
     }
 
-    const updateData = { 
+    const updateData = {
       status,
       updatedAt: new Date().toISOString(),
       updatedAtDisplay: new Intl.DateTimeFormat(undefined, {
@@ -416,11 +420,11 @@ app.patch('/api/feedbacks/:id/status', requireAdmin, async (req, res, next) => {
       if (!result || !result.value) return res.status(404).json({ error: 'Not found' });
       return res.json(result.value);
     }
-    
+
     const items = readAll();
     const idx = items.findIndex(f => f.id === id);
     if (idx === -1) return res.status(404).json({ error: 'Not found' });
-    
+
     Object.assign(items[idx], updateData);
     await writeAll(items);
     res.json(items[idx]);
@@ -478,6 +482,11 @@ app.delete('/api/feedbacks/:id', requireAdmin, async (req, res, next) => {
 app.use((err, req, res, next) => {
   console.error('[express-error]', err);
   const status = err.statusCode || err.status || 500;
+  // Return the specific error message for CORS or other known client errors
+  if (err.message === 'Not allowed by CORS') {
+    return res.status(403).json({ error: 'CORS Error: Origin not allowed' });
+  }
+
   res.status(status).json({ error: 'Internal Server Error' });
 });
 
