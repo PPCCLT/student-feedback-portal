@@ -202,8 +202,9 @@ async function initMongo() {
     await feedbacksCollection.createIndex({ createdAt: -1 });
     console.log('[mongo] connected');
   } catch (err) {
+    console.warn('[mongo] connection failed:', err.message);
+    console.warn('[mongo] using JSON file storage fallback');
     feedbacksCollection = null;
-    console.warn('[mongo] not available, using JSON file storage');
   }
 }
 initMongo();
