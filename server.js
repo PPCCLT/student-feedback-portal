@@ -10,6 +10,7 @@ import { nanoid } from 'nanoid';
 import { MongoClient } from 'mongodb';
 import compression from 'compression';
 
+// Get the current directory name in ES module
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const DATA_FILE = path.join(__dirname, 'data', 'feedbacks.json');
@@ -44,41 +45,13 @@ function writeAll(items) {
 
 const app = express();
 
-// CORS configuration with more permissive settings for development
+// CORS configuration - permissive for development
 const corsOptions = {
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps, curl, etc.)
-    if (!origin) return callback(null, true);
-    
-    const allowedOrigins = [
-      'http://localhost:4000',
-      'http://127.0.0.1:4000',
-      'http://localhost:3000',
-      'http://127.0.0.1:3000'
-    ];
-    
-    if (allowedOrigins.includes(origin) || !origin) {
-      callback(null, true);
-    } else {
-      console.warn('CORS blocked request from origin:', origin);
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: '*',  // Allow all origins
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: [
-    'Content-Type',
-    'Authorization',
-    'X-Requested-With',
-    'Accept',
-    'Origin',
-    'Access-Control-Allow-Headers',
-    'Access-Control-Request-Method',
-    'Access-Control-Request-Headers'
-  ],
-  exposedHeaders: ['Content-Length', 'X-Foo', 'X-Bar'],
-  preflightContinue: false,
-  optionsSuccessStatus: 204
+  allowedHeaders: ['*'],
+  exposedHeaders: ['*']
 };
 
 // Apply CORS with the above configuration
@@ -87,8 +60,24 @@ app.use(cors(corsOptions));
 // Handle preflight requests
 app.options('*', cors(corsOptions));
 
+// Add CORS headers to all responses
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+  
+  // Handle preflight
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  
+  next();
+});
+
 // Limit JSON payload size
 app.use(express.json({ limit: process.env.JSON_BODY_LIMIT || '100kb' }));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(compression());
 
@@ -157,24 +146,20 @@ function requireAdmin(req, res, next) {
   return authMiddleware(req, res, next);
 }
 
-// Serve static files (HTML, CSS, JS) with caching for assets
-app.use(
-  express.static(__dirname, {
-    setHeaders: (res, filePath) => {
-      const ext = path.extname(filePath).toLowerCase();
-      const longCache = 'public, max-age=' + (60 * 60 * 24 * 30); // 30 days
-      const noCache = 'no-cache';
-      if (['.js', '.css', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp', '.ico'].includes(ext)) {
-        res.setHeader('Cache-Control', longCache);
-      } else if (ext === '.html') {
-        res.setHeader('Cache-Control', noCache);
-      }
-    }
-  })
-);
+// Serve static files from the root directory
+app.use(express.static('.'));
 
-// Load environment variables from .env file
-import 'dotenv/config';
+// Serve admin_login.html at the root path
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin_login.html'));
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
+
 
 // MongoDB setup (optional). If not available, fallback to JSON file.
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/student_feedback_portal';
