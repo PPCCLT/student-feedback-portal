@@ -585,10 +585,8 @@
                 btnLogin.disabled = true;
                 btnLogin.textContent = 'Signing in...';
 
-                // Use the full URL with the correct port
-                const apiUrl = window.location.origin.includes('3000') 
-                    ? 'http://localhost:4000/api/login' 
-                    : '/api/login';
+                // Use relative path for production compatibility
+                const apiUrl = '/api/login';
                 
                 console.log('Making login request to:', apiUrl);
                 

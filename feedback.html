@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,11 +19,10 @@
             color: #333;
         }
 
-        /* Navbar */
         .navbar {
             background: #1e5ba8;
             padding: 15px 5%;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
         .navbar-content {
@@ -42,40 +42,6 @@
             color: white;
         }
 
-        .logo-container {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .logo-img {
-            height: 70px;
-            width: auto;
-            object-fit: contain;
-        }
-
-        .logo-text {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 2px;
-        }
-
-        .logo-main-text {
-            font-size: 20px;
-            font-weight: 700;
-            color: white;
-            line-height: 1.1;
-        }
-
-        .logo-sub-text {
-            font-size: 16px;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.95);
-            line-height: 1.1;
-        }
-
         .nav-links a {
             color: white;
             text-decoration: none;
@@ -88,14 +54,12 @@
             opacity: 0.8;
         }
 
-        /* Main Container */
         .container {
             max-width: 1000px;
             margin: 40px auto;
             padding: 0 20px;
         }
 
-        /* Header Section */
         .form-header {
             text-align: center;
             margin-bottom: 30px;
@@ -113,11 +77,10 @@
             font-size: 16px;
         }
 
-        /* Form Card */
         .form-card {
             background: white;
             border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             overflow: hidden;
         }
 
@@ -125,7 +88,6 @@
             padding: 40px;
         }
 
-        /* Two Column Layout */
         .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -137,7 +99,6 @@
             grid-template-columns: 1fr;
         }
 
-        /* Form Groups */
         .form-group {
             margin-bottom: 20px;
         }
@@ -197,7 +158,6 @@
             padding-right: 40px;
         }
 
-        /* Info Box */
         .info-box {
             background: #e3f2fd;
             border-left: 4px solid #1e5ba8;
@@ -213,7 +173,6 @@
             margin: 0;
         }
 
-        /* Submit Button */
         .submit-section {
             margin-top: 30px;
             text-align: center;
@@ -241,7 +200,6 @@
             transform: translateY(0);
         }
 
-        /* Success Modal */
         .success-modal {
             display: none;
             position: fixed;
@@ -249,7 +207,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.5);
             z-index: 1000;
             align-items: center;
             justify-content: center;
@@ -266,7 +224,7 @@
             text-align: center;
             max-width: 400px;
             animation: slideUp 0.3s ease;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
         }
 
         @keyframes slideUp {
@@ -274,6 +232,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -297,49 +256,6 @@
             line-height: 1.6;
         }
 
-        .tracking-info {
-            background: #f8f9fa;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 20px 0;
-            text-align: left;
-        }
-
-        .tracking-id {
-            font-size: 18px;
-            font-weight: 600;
-            color: #1e5ba8;
-            margin-bottom: 10px;
-            word-break: break-all;
-        }
-
-        .tracking-instructions {
-            font-size: 14px;
-            color: #666;
-            line-height: 1.6;
-        }
-
-        .btn-track {
-            background: #28a745;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-top: 15px;
-            display: inline-block;
-            text-decoration: none;
-        }
-
-        .btn-track:hover {
-            background: #218838;
-            transform: translateY(-1px);
-        }
-
         .btn-close {
             background: #1e5ba8;
             color: white;
@@ -356,7 +272,6 @@
             background: #164a8a;
         }
 
-        /* Footer */
         footer {
             background: #1e5ba8;
             color: white;
@@ -369,7 +284,6 @@
             font-size: 14px;
         }
 
-        /* Section Headers */
         .section-header {
             color: #1e5ba8;
             font-size: 18px;
@@ -383,7 +297,6 @@
             margin-top: 0;
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
             .form-grid {
                 grid-template-columns: 1fr;
@@ -399,45 +312,36 @@
         }
     </style>
 </head>
+
 <body>
-    <!-- Navbar -->
     <nav class="navbar">
         <div class="navbar-content">
-            <div class="logo">
-                <div class="logo-container">
-                    <img src="assets/logos/IITB logo.png" alt="Institute Logo" class="logo-img" onerror="this.style.display='none'">
-                    <div class="logo-text">
-                        <div class="logo-main-text">Indian Institute of Technology Bombay</div>
-                        <div class="logo-sub-text">Student Feedback Portal</div>
-                    </div>
-                </div>
-            </div>
+            <div class="logo">Student Feedback Portal</div>
             <div class="nav-links">
                 <a href="index.html">Home</a>
-                <a href="track-feedback.html">Track Feedback</a>
                 <a href="#about">About</a>
                 <a href="#contact">Contact</a>
             </div>
         </div>
     </nav>
 
-    <!-- Main Content -->
     <div class="container">
         <div class="form-header">
-            <h1>Submit Your Feedback</h1>
-            <p>Your feedback is anonymous and helps us improve the quality of education</p>
+            <h1>Submit Academic Feedback</h1>
+            <p>Share your feedback on academic matters to help us improve teaching and learning</p>
         </div>
 
         <div class="form-card">
             <div class="form-content">
                 <div class="info-box">
-                    <p><strong>Your voice matters!</strong> Share your honest feedback to help us create a better learning environment. All submissions are confidential.</p>
+                    <p><strong>Focus on Academics:</strong> This portal is for feedback related to courses, teaching,
+                        evaluation, and academic events. For infrastructure or maintenance issues, please contact the
+                        appropriate department.</p>
                 </div>
 
                 <form id="feedbackForm">
-                    <!-- Personal Information Section -->
                     <div class="section-header">Personal Information (Optional)</div>
-                    
+
                     <div class="form-grid">
                         <div class="form-group">
                             <label>Name <span class="optional">(Optional)</span></label>
@@ -457,24 +361,24 @@
                         </div>
 
                         <div class="form-group">
-                            <label>Course No. <span class="optional">(Optional)</span></label>
+                            <label>Course Code <span class="optional">(Optional)</span></label>
                             <input type="text" id="courseNo" placeholder="e.g., CS101">
                         </div>
                     </div>
 
-                    <!-- Feedback Details Section -->
-                    <div class="section-header">Feedback Details</div>
+                    <div class="section-header">Academic Feedback Details</div>
 
                     <div class="form-grid">
                         <div class="form-group">
                             <label>Category <span class="required">*</span></label>
                             <select id="category" required>
                                 <option value="">Select Category</option>
-                                <option value="Lectures">Lectures</option>
-                                <option value="Classrooms">Classrooms</option>
-                                <option value="Facilities">Facilities</option>
-                                <option value="Events">Events</option>
-                                <option value="Other">Other</option>
+                                <option value="Course Content">Course Content</option>
+                                <option value="Teaching Methods">Teaching Methods</option>
+                                <option value="Faculty Interaction">Faculty Interaction</option>
+                                <option value="Evaluation & Assessment">Evaluation & Assessment</option>
+                                <option value="Academic Events">Academic Events</option>
+                                <option value="Other Academic">Other Academic</option>
                             </select>
                         </div>
 
@@ -501,26 +405,20 @@
                     <div class="form-grid full-width">
                         <div class="form-group">
                             <label>Your Feedback <span class="required">*</span></label>
-                            <textarea 
-                                id="feedbackText" 
-                                placeholder="Please share your detailed feedback here..."
-                                required
-                            ></textarea>
+                            <textarea id="feedbackText"
+                                placeholder="Please share your detailed feedback on academic matters..."
+                                required></textarea>
                         </div>
                     </div>
 
                     <div class="form-grid full-width">
                         <div class="form-group">
                             <label>Suggestions for Improvement <span class="optional">(Optional)</span></label>
-                            <textarea 
-                                id="suggestions" 
-                                placeholder="Any suggestions on how we can improve?"
-                                rows="4"
-                            ></textarea>
+                            <textarea id="suggestions" placeholder="Any suggestions on how we can improve academically?"
+                                rows="4"></textarea>
                         </div>
                     </div>
 
-                    <!-- Submit Button -->
                     <div class="submit-section">
                         <button type="submit" class="btn-submit">
                             Submit Feedback
@@ -531,69 +429,74 @@
         </div>
     </div>
 
-    <!-- Success Modal -->
     <div id="successModal" class="success-modal">
         <div class="success-content">
             <div class="icon">✅</div>
             <h2>Thank You!</h2>
-            <p>Your feedback has been submitted successfully. We appreciate your contribution to improving our institution.</p>
-            
-            <div class="tracking-info">
-                <div class="tracking-id" id="trackingIdDisplay">Your Feedback ID: <span id="feedbackIdSpan"></span></div>
-                <div class="tracking-instructions">
-                    <strong>Save this ID!</strong> You can use it to track the status of your feedback and see when actions are taken.
-                </div>
-                <a href="#" class="btn-track" id="trackFeedbackBtn">Track Your Feedback</a>
-            </div>
-            
+            <p>Your academic feedback has been submitted successfully. We appreciate your contribution to improving our
+                teaching and learning.</p>
             <button class="btn-close" onclick="closeModal()">Close</button>
         </div>
     </div>
 
-    <!-- Footer -->
     <footer>
         <p>&copy; 2025 Student Feedback Portal. All rights reserved.</p>
     </footer>
 
     <script>
-        // Subcategory mappings
+        // Academic-focused subcategories
         const subcategories = {
-            'Lectures': [
-                'Teaching Clarity',
-                'Course Content',
-                'Teaching Aids',
-                'Evaluation Methods',
-                'Faculty Availability',
+            'Course Content': [
+                'Syllabus Coverage',
+                'Relevance to Industry',
+                'Difficulty Level',
+                'Course Material Quality',
+                'Textbook Recommendations',
+                'Prerequisites Clarity',
                 'Other'
             ],
-            'Classrooms': [
-                'Seating and Comfort',
-                'Lighting and Ventilation',
-                'Equipment (Projector, Board)',
-                'Cleanliness',
-                'Class Scheduling',
+            'Teaching Methods': [
+                'Lecture Clarity',
+                'Use of Teaching Aids',
+                'Pace of Teaching',
+                'Interactive Sessions',
+                'Problem-Solving Approach',
+                'Real-World Examples',
                 'Other'
             ],
-            'Facilities': [
-                'Wi-Fi and Internet',
-                'Library',
-                'Computer Labs',
-                'Sports Facilities',
-                'Hostel',
-                'Cleanliness',
+            'Faculty Interaction': [
+                'Availability for Doubts',
+                'Response to Queries',
+                'Mentorship Quality',
+                'Communication Style',
+                'Approachability',
+                'Office Hours',
                 'Other'
             ],
-            'Events': [
-                'Event Organization',
-                'Event Timing',
-                'Participation Opportunities',
-                'Communication',
-                'Venue',
+            'Evaluation & Assessment': [
+                'Assignment Quality',
+                'Exam Difficulty',
+                'Grading Fairness',
+                'Feedback on Submissions',
+                'Project Evaluation',
+                'Quiz Frequency',
                 'Other'
             ],
-            'Other': [
-                'General Feedback',
-                'Compliment',
+            'Academic Events': [
+                'Guest Lectures',
+                'Workshops',
+                'Seminars',
+                'Conferences',
+                'Academic Competitions',
+                'Research Presentations',
+                'Other'
+            ],
+            'Other Academic': [
+                'Lab Sessions',
+                'Tutorial Classes',
+                'Course Registration',
+                'Academic Counseling',
+                'Research Opportunities',
                 'Other'
             ]
         };
@@ -603,11 +506,10 @@
         const feedbackForm = document.getElementById('feedbackForm');
         const successModal = document.getElementById('successModal');
 
-        // Update subcategories when category changes
-        categorySelect.addEventListener('change', function() {
+        categorySelect.addEventListener('change', function () {
             const category = this.value;
             subcategorySelect.innerHTML = '<option value="">Select Subcategory</option>';
-            
+
             if (category && subcategories[category]) {
                 subcategories[category].forEach(sub => {
                     const option = document.createElement('option');
@@ -621,8 +523,7 @@
             }
         });
 
-        // Form submission
-        feedbackForm.addEventListener('submit', async function(e) {
+        feedbackForm.addEventListener('submit', function (e) {
             e.preventDefault();
 
             const formData = {
@@ -633,65 +534,23 @@
                 category: document.getElementById('category').value,
                 subcategory: document.getElementById('subcategory').value,
                 urgency: document.getElementById('urgency').value,
-                text: document.getElementById('feedbackText').value,
+                feedback: document.getElementById('feedbackText').value,
                 suggestions: document.getElementById('suggestions').value,
-                createdAt: new Date().toISOString()
+                timestamp: new Date().toISOString()
             };
 
-            const submitBtn = document.querySelector('.btn-submit');
-            const originalBtnText = submitBtn.textContent;
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Submitting...';
+            console.log('Form Data:', formData);
 
-            // Generate a temporary ID and show the modal immediately
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-';
-            let tempId = 'FB-';
-            for (let i = 0; i < 8; i++) { tempId += chars.charAt(Math.floor(Math.random() * chars.length)); }
-            document.getElementById('feedbackIdSpan').textContent = tempId;
-            const trackBtn = document.getElementById('trackFeedbackBtn');
-            trackBtn.href = `track-feedback.html?id=${tempId}`;
+            // Here you would send formData to your backend
+            // For now, just show success modal
             successModal.classList.add('active');
-
-            try {
-                const response = await fetch('/api/feedbacks', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(formData)
-                });
-
-                if (response.ok) {
-                    const result = await response.json();
-                    document.getElementById('feedbackIdSpan').textContent = result.id;
-                    document.getElementById('trackFeedbackBtn').href = `track-feedback.html?id=${result.id}`;
-                    feedbackForm.reset();
-                } else {
-                    throw new Error('API error');
-                }
-            } catch (error) {
-                // Fallback: Save to localStorage
-                const feedbacks = JSON.parse(localStorage.getItem('feedbacks') || '[]');
-                formData.id = tempId;
-                formData.status = 'pending';
-                feedbacks.push(formData);
-                localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
-                feedbackForm.reset();
-            }
-            submitBtn.disabled = false;
-            submitBtn.textContent = originalBtnText;
+            feedbackForm.reset();
         });
-
-        function showSuccessModal(feedbackId) {
-            document.getElementById('feedbackIdSpan').textContent = feedbackId;
-            const trackBtn = document.getElementById('trackFeedbackBtn');
-            trackBtn.href = `track-feedback.html?id=${feedbackId}`;
-            successModal.classList.add('active');
-        }
 
         function closeModal() {
             successModal.classList.remove('active');
         }
     </script>
 </body>
+
 </html>
