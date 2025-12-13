@@ -12,9 +12,9 @@ async function testFeedbackFlow() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 category: 'Academic',
-                subcategory: 'Course Content',
+
                 text: 'Test feedback for tracking',
-                urgency: 'Medium',
+
                 studentName: 'Test Student'
             })
         });

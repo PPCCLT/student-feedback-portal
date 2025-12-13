@@ -1,121 +1,333 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Super Admin Dashboard - Student Feedback Portal</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; color: #333; }
-        .navbar { width: 100%; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; background: #1e5ba8; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .logo { display: flex; align-items: center; gap: 20px; font-size: 22px; font-weight: 600; color: white; }
-        .logo-container { display: flex; flex-direction: row; align-items: center; gap: 15px; }
-        .logo-img { height: 70px; width: auto; object-fit: contain; }
-        .logo-text { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; }
-        .logo-main-text { font-size: 20px; font-weight: 700; color: white; line-height: 1.1; }
-        .logo-sub-text { font-size: 16px; font-weight: 600; color: rgba(255, 255, 255, 0.95); line-height: 1.1; }
-        .nav-links { display: flex; gap: 30px; align-items: center; }
-        .nav-links a { color: white; text-decoration: none; transition: opacity 0.3s; font-size: 14px; }
-        .nav-links a:hover { opacity: 0.8; }
-        .btn-logout { background: white; color: #1e5ba8; padding: 8px 20px; border-radius: 5px; text-decoration: none; font-size: 14px; font-weight: 600; border: none; cursor: pointer; }
-        .container { max-width: 1400px; margin: 30px auto; padding: 20px; }
-        .dashboard-header { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 30px; }
-        .dashboard-header h1 { color: #1e5ba8; font-size: 28px; margin-bottom: 10px; font-weight: 600; }
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .stat-card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); text-align: center; }
-        .stat-card h3 { font-size: 32px; color: #1e5ba8; margin-bottom: 5px; }
-        .filters { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 20px; display: flex; gap: 15px; flex-wrap: wrap; align-items: center; }
-        .filters label { font-weight: 600; font-size: 14px; }
-        .filters select { padding: 8px 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; }
-        .feedback-list { background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); overflow: hidden; }
-        .feedback-item { padding: 25px; border-bottom: 1px solid #f0f0f0; transition: background 0.3s; }
-        .feedback-item:hover { background: #fafafa; }
-        .feedback-item:last-child { border-bottom: none; }
-        .feedback-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px; flex-wrap: wrap; gap: 10px; }
-        .feedback-meta { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-        .category-badge { display: inline-block; padding: 5px 12px; border-radius: 15px; font-size: 12px; font-weight: 600; background: #e3f2fd; color: #1e5ba8; }
-        .urgency-badge { padding: 5px 12px; border-radius: 15px; font-size: 12px; font-weight: 600; }
-        .urgency-low { background: #e8f5e9; color: #2e7d32; }
-        .urgency-medium { background: #fff3e0; color: #ef6c00; }
-        .urgency-high { background: #ffebee; color: #c62828; }
-        .btn-action { padding: 6px 15px; border: none; border-radius: 5px; font-size: 12px; cursor: pointer; transition: opacity 0.3s; font-weight: 600; }
-        .btn-resolve { background: #4caf50; color: white; }
-        .btn-delete { background: #f44336; color: white; }
-        .status-resolved { background: #f1f8f4; border-left: 4px solid #4caf50; }
-        footer { padding: 30px 5%; background: #1e5ba8; text-align: center; color: white; margin-top: 50px; }
-        footer p { font-size: 14px; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .navbar {
+            width: 100%;
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #1e5ba8;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            font-size: 22px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .logo-container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-img {
+            height: 70px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 2px;
+        }
+
+        .logo-main-text {
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+            line-height: 1.1;
+        }
+
+        .logo-sub-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.95);
+            line-height: 1.1;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.3s;
+            font-size: 14px;
+        }
+
+        .nav-links a:hover {
+            opacity: 0.8;
+        }
+
+        .btn-logout {
+            background: white;
+            color: #1e5ba8;
+            padding: 8px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .dashboard-header {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+        }
+
+        .dashboard-header h1 {
+            color: #1e5ba8;
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            font-size: 32px;
+            color: #1e5ba8;
+            margin-bottom: 5px;
+        }
+
+        .filters {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filters label {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .filters select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .feedback-list {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .feedback-item {
+            padding: 25px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background 0.3s;
+        }
+
+        .feedback-item:hover {
+            background: #fafafa;
+        }
+
+        .feedback-item:last-child {
+            border-bottom: none;
+        }
+
+        .feedback-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .feedback-meta {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+            background: #e3f2fd;
+            color: #1e5ba8;
+        }
+
+        .btn-action {
+            padding: 6px 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: opacity 0.3s;
+            font-weight: 600;
+        }
+
+        .btn-resolve {
+            background: #4caf50;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #f44336;
+            color: white;
+        }
+
+        .status-resolved {
+            background: #f1f8f4;
+            border-left: 4px solid #4caf50;
+        }
+
+        footer {
+            padding: 30px 5%;
+            background: #1e5ba8;
+            text-align: center;
+            color: white;
+            margin-top: 50px;
+        }
+
+        footer p {
+            font-size: 14px;
+        }
     </style>
-    </head>
-    <body>
-        <nav class="navbar">
-            <div class="logo">
-                <div class="logo-container">
-                    <img src="assets/logos/IITB logo.png" alt="Institute Logo" class="logo-img" onerror="this.style.display='none'">
-                    <div class="logo-text">
-                        <div class="logo-main-text">Indian Institute of Technology Bombay</div>
-                        <div class="logo-sub-text">🔧 Super Admin Dashboard</div>
-                    </div>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <div class="logo-container">
+                <img src="assets/logos/IITB logo.png" alt="Institute Logo" class="logo-img"
+                    onerror="this.style.display='none'">
+                <div class="logo-text">
+                    <div class="logo-main-text">Indian Institute of Technology Bombay</div>
+                    <div class="logo-sub-text">🔧 Super Admin Dashboard</div>
                 </div>
             </div>
-            <div class="nav-links">
-                <a href="admin_login.html?switch=1">Switch Department</a>
-                <button class="btn-logout" onclick="logout()">Logout</button>
-            </div>
-        </nav>
+        </div>
+        <div class="nav-links">
+            <a href="admin_login.html?switch=1">Switch Department</a>
+            <button class="btn-logout" onclick="logout()">Logout</button>
+        </div>
+    </nav>
 
-        <div class="container">
-            <div class="dashboard-header">
-                <h1>Super Admin Dashboard <span style="display:inline-block;background:#e3f2fd;color:#1e5ba8;padding:5px 12px;border-radius:15px;font-size:12px;font-weight:600;margin-left:10px;">SUPER ADMIN</span></h1>
-                <p>Manage and review all student feedback across all departments</p>
-            </div>
-
-            <div class="stats-grid">
-                <div class="stat-card"><h3 id="stat-total">0</h3><p>Total Feedback</p></div>
-                <div class="stat-card"><h3 id="stat-pending">0</h3><p>Pending Review</p></div>
-                <div class="stat-card"><h3 id="stat-resolved">0</h3><p>Resolved</p></div>
-                <div class="stat-card"><h3 id="stat-high">0</h3><p>High Priority</p></div>
-            </div>
-
-            <div class="filters">
-                <label>Filter by:</label>
-                <select onchange="filterCategory(this.value)">
-                    <option value="all">All Categories</option>
-                    <option value="Lectures">Lectures</option>
-                    <option value="Classrooms">Classrooms</option>
-                    <option value="Facilities">Facilities</option>
-                    <option value="Events">Events</option>
-                    <option value="Other">Other</option>
-                </select>
-                <select onchange="filterUrgency(this.value)">
-                    <option value="all">All Urgency</option>
-                    <option value="High">High</option>
-                    <option value="Medium">Medium</option>
-                    <option value="Low">Low</option>
-                </select>
-                <select onchange="filterStatus(this.value)">
-                    <option value="all">All Status</option>
-                    <option value="pending">Pending</option>
-                    <option value="resolved">Resolved</option>
-                </select>
-            </div>
-
-            <div id="feedbackList" class="feedback-list"></div>
+    <div class="container">
+        <div class="dashboard-header">
+            <h1>Super Admin Dashboard <span
+                    style="display:inline-block;background:#e3f2fd;color:#1e5ba8;padding:5px 12px;border-radius:15px;font-size:12px;font-weight:600;margin-left:10px;">SUPER
+                    ADMIN</span></h1>
+            <p>Manage and review all student feedback across all departments</p>
         </div>
 
-        <footer>
-            <p>&copy; 2025 Student Feedback Portal. All rights reserved.</p>
-        </footer>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3 id="stat-total">0</h3>
+                <p>Total Feedback</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="stat-pending">0</h3>
+                <p>Pending Review</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="stat-resolved">0</h3>
+                <p>Resolved</p>
+            </div>
 
-        <script>
+        </div>
+
+        <div class="filters">
+            <label>Filter by:</label>
+            <select onchange="filterCategory(this.value)">
+                <option value="all">All Categories</option>
+                <option value="Lectures">Lectures</option>
+                <option value="Classrooms">Classrooms</option>
+                <option value="Facilities">Facilities</option>
+                <option value="Events">Events</option>
+                <option value="Other">Other</option>
+            </select>
+
+            <select onchange="filterStatus(this.value)">
+                <option value="all">All Status</option>
+                <option value="pending">Pending</option>
+                <option value="resolved">Resolved</option>
+            </select>
+        </div>
+
+        <div id="feedbackList" class="feedback-list"></div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Student Feedback Portal. All rights reserved.</p>
+    </footer>
+
+    <script>
         (function () {
             const listEl = document.getElementById('feedbackList');
             const statTotal = document.getElementById('stat-total');
             const statPending = document.getElementById('stat-pending');
             const statResolved = document.getElementById('stat-resolved');
-            const statHigh = document.getElementById('stat-high');
 
             let feedbacks = [];
-            let activeFilters = { category: 'all', urgency: 'all', status: 'all' };
+            let activeFilters = { category: 'all', status: 'all' };
 
             // Access control
             const adminDept = sessionStorage.getItem('adminDept');
@@ -133,7 +345,7 @@
                     feedbacks = Array.isArray(json) ? json : (json && json.data) || [];
                     // Ensure newest first
                     feedbacks.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                    try { localStorage.setItem('feedbacks', JSON.stringify(feedbacks)); } catch (_) {}
+                    try { localStorage.setItem('feedbacks', JSON.stringify(feedbacks)); } catch (_) { }
                 } catch (_) {
                     try { feedbacks = JSON.parse(localStorage.getItem('feedbacks') || '[]'); } catch (_) { feedbacks = []; }
                     // Ensure newest first for offline copy as well
@@ -141,15 +353,10 @@
                 }
             }
 
-            function urgencyClass(u) {
-                if (u === 'High') return 'urgency-high';
-                if (u === 'Medium') return 'urgency-medium';
-                return 'urgency-low';
-            }
+
 
             function matchesFilters(item) {
                 if (activeFilters.category !== 'all' && item.category !== activeFilters.category) return false;
-                if (activeFilters.urgency !== 'all' && item.urgency !== activeFilters.urgency) return false;
                 if (activeFilters.status !== 'all' && item.status !== activeFilters.status) return false;
                 return true;
             }
@@ -158,11 +365,9 @@
                 const total = feedbacks.length;
                 const resolved = feedbacks.filter(f => f.status === 'resolved').length;
                 const pending = total - resolved;
-                const high = feedbacks.filter(f => f.urgency === 'High').length;
                 statTotal.textContent = total;
                 statResolved.textContent = resolved;
                 statPending.textContent = pending;
-                statHigh.textContent = high;
             }
 
             function render() {
@@ -190,11 +395,7 @@
                     const cat = document.createElement('span');
                     cat.className = 'category-badge';
                     cat.textContent = item.category;
-                    const urg = document.createElement('span');
-                    urg.className = 'urgency-badge ' + urgencyClass(item.urgency);
-                    urg.textContent = (item.urgency === 'High' ? 'High' : item.urgency) + ' Priority';
                     meta.appendChild(cat);
-                    meta.appendChild(urg);
                     if (item.status === 'resolved') {
                         const resBadge = document.createElement('span');
                         resBadge.style.background = '#4caf50';
@@ -332,14 +533,13 @@
             }
 
             window.filterCategory = function (category) { activeFilters.category = category; render(); };
-            window.filterUrgency = function (urgency) { activeFilters.urgency = urgency; render(); };
+
             window.filterStatus = function (status) { activeFilters.status = status; render(); };
             window.logout = function () { sessionStorage.clear(); window.location.href = 'admin_login.html'; };
 
             (async function init() { await load(); render(); })();
         })();
-        </script>
-    </body>
-    </html>
+    </script>
+</body>
 
-
+</html>

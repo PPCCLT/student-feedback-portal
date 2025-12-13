@@ -13,9 +13,9 @@ async function main() {
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({
       category: 'General',
-      subcategory: 'Suggestions',
+
       text: `Smoke test ${Date.now()}`,
-      urgency: 'low',
+
       suggestions: 'optional'
     })
   });

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -24,7 +25,7 @@
             justify-content: space-between;
             align-items: center;
             background: #1e5ba8;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
         .logo {
@@ -72,7 +73,7 @@
             background: white;
             padding: 30px;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
             margin-bottom: 30px;
         }
 
@@ -92,7 +93,7 @@
             background: white;
             padding: 25px;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
             margin-bottom: 30px;
         }
 
@@ -149,7 +150,7 @@
             background: white;
             padding: 30px;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
             margin-bottom: 25px;
         }
 
@@ -274,17 +275,23 @@
         }
 
         @media print {
-            .navbar, .export-buttons, .date-filter, footer {
+
+            .navbar,
+            .export-buttons,
+            .date-filter,
+            footer {
                 display: none;
             }
         }
     </style>
 </head>
+
 <body>
     <nav class="navbar no-print">
         <div class="logo">
             <div class="logo-container">
-                <img src="assets/logos/IITB logo.png" alt="Institute Logo" class="logo-img" onerror="this.style.display='none'">
+                <img src="assets/logos/IITB logo.png" alt="Institute Logo" class="logo-img"
+                    onerror="this.style.display='none'">
                 <div class="logo-text">
                     <div class="logo-main-text">Indian Institute of Technology Bombay</div>
                     <div class="logo-sub-text">Admin Dashboard</div>
@@ -350,22 +357,7 @@
             </table>
         </div>
 
-        <!-- Urgency-wise Distribution -->
-        <div class="report-section">
-            <h2>Urgency-wise Distribution</h2>
-            <table class="report-table">
-                <thead>
-                    <tr>
-                        <th>Urgency Level</th>
-                        <th>Total Count</th>
-                        <th>Pending</th>
-                        <th>Resolved</th>
-                        <th>Percentage of Total</th>
-                    </tr>
-                </thead>
-                <tbody id="urgencyTbody"></tbody>
-            </table>
-        </div>
+
 
         <!-- Monthly Trend -->
         <div class="report-section">
@@ -408,7 +400,7 @@
                 const res = await fetch('http://localhost:3000/api/feedbacks');
                 if (!res.ok) throw new Error('API error');
                 allFeedbacks = await res.json();
-                try { localStorage.setItem('feedbacks', JSON.stringify(allFeedbacks)); } catch (_) {}
+                try { localStorage.setItem('feedbacks', JSON.stringify(allFeedbacks)); } catch (_) { }
             } catch (_) {
                 try {
                     allFeedbacks = JSON.parse(localStorage.getItem('feedbacks') || '[]');
@@ -440,7 +432,7 @@
                 if (from && d < from) return false;
                 if (to) {
                     const end = new Date(to);
-                    end.setHours(23,59,59,999);
+                    end.setHours(23, 59, 59, 999);
                     if (d > end) return false;
                 }
                 return true;
@@ -484,7 +476,7 @@
                 total += t; totalPending += p; totalResolved += r;
                 rows.push({ cat, t, p, r });
             });
-            rows.sort((a,b) => b.t - a.t);
+            rows.sort((a, b) => b.t - a.t);
             for (const row of rows) {
                 const tr = document.createElement('tr');
                 const pct = total ? ((row.t / total) * 100) : 0;
@@ -510,38 +502,16 @@
             tbody.appendChild(totalTr);
         }
 
-        function renderUrgencyTable() {
-            const tbody = document.getElementById('urgencyTbody');
-            tbody.innerHTML = '';
-            const levels = ['High', 'Medium', 'Low'];
-            const total = filtered.length;
-            let totalP = 0, totalR = 0;
-            for (const level of levels) {
-                const items = filtered.filter(f => f.urgency === level);
-                const t = items.length;
-                const r = items.filter(f => f.status === 'resolved').length;
-                const p = t - r;
-                totalP += p; totalR += r;
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><strong>${level} Priority</strong></td>
-                    <td>${t}</td>
-                    <td>${p}</td>
-                    <td>${r}</td>
-                    <td>${formatPercent(total ? t / total : 0)}</td>
-                `;
-                tbody.appendChild(tr);
-            }
-        }
+
 
         function monthKey(dateStr) {
             const d = new Date(dateStr);
-            return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
         }
 
         function monthLabel(key) {
             const [y, m] = key.split('-').map(Number);
-            const date = new Date(y, m-1, 1);
+            const date = new Date(y, m - 1, 1);
             return date.toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
         }
 
@@ -572,18 +542,18 @@
             applyFilters();
             renderSummary();
             renderCategoryTable();
-            renderUrgencyTable();
+
             renderTrend();
         }
 
         function exportReport(format) {
             if (format !== 'excel') return;
             // Export filtered rows as CSV
-            const headers = ['ID','Category','Urgency','Status','Created At','Feedback'];
+            const headers = ['ID', 'Category', 'Status', 'Created At', 'Feedback'];
             const rows = filtered.map(f => [
                 f.id,
                 f.category,
-                f.urgency,
+
                 f.status,
                 f.createdAtDisplay || new Date(f.createdAt).toLocaleString(),
                 (f.text || '').replace(/\n/g, ' ')
@@ -611,13 +581,13 @@
         }
 
         // Initialize defaults and load data
-        document.addEventListener('DOMContentLoaded', async function() {
+        document.addEventListener('DOMContentLoaded', async function () {
             const today = new Date();
             const toStr = today.toISOString().split('T')[0];
             const fromDateEl = document.getElementById('fromDate');
             const toDateEl = document.getElementById('toDate');
             toDateEl.value = toStr;
-            const thirtyDaysAgo = new Date(today.getTime() - 29*24*60*60*1000);
+            const thirtyDaysAgo = new Date(today.getTime() - 29 * 24 * 60 * 60 * 1000);
             fromDateEl.value = thirtyDaysAgo.toISOString().split('T')[0];
 
             await loadData();
@@ -625,4 +595,5 @@
         });
     </script>
 </body>
+
 </html>

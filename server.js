@@ -345,9 +345,9 @@ app.get('/api/feedbacks', async (req, res, next) => {
 
 // Create feedback
 app.post('/api/feedbacks', async (req, res, next) => {
-  const { category, subcategory, text, suggestions, urgency, studentName, rollNo, department, courseNo } = req.body || {};
-  if (!category || !subcategory || !text || !urgency) {
-    return res.status(400).json({ error: 'category, subcategory, text, urgency are required' });
+  const { category, subcategory, text, suggestions, studentName, rollNo, department, courseNo } = req.body || {};
+  if (!category || !text) {
+    return res.status(400).json({ error: 'category, text are required' });
   }
   try {
     const now = new Date();
@@ -358,9 +358,7 @@ app.post('/api/feedbacks', async (req, res, next) => {
     const item = {
       id: `FB-${nanoid(8)}`,
       category,
-      subcategory: String(subcategory).trim().slice(0, maxShortLen),
       text: String(text).trim().slice(0, maxTextLen),
-      urgency,
       // Optional free-text suggestions from the student
       ...(suggestions ? { suggestions: String(suggestions).trim().slice(0, maxSuggestionsLen) } : {}),
       // Optional student fields (only stored if provided)

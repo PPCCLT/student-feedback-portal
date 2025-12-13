@@ -102,7 +102,7 @@ A comprehensive student feedback portal with department-specific admin access co
 ### **Admin Features:**
 - ✅ Department-specific access control
 - ✅ Category-filtered feedback views
-- ✅ Subcategory and urgency filtering
+
 - ✅ Mark feedback as resolved
 - ✅ Delete feedback
 - ✅ Statistics overview
