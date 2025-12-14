@@ -514,6 +514,9 @@
 
         function showSuccessModal(feedbackId) {
             document.getElementById('feedbackIdSpan').textContent = feedbackId;
+            // Save to sessionStorage for robustness (fixes Firefox specific issues)
+            sessionStorage.setItem('lastFeedbackId', feedbackId);
+
             const trackBtn = document.getElementById('trackFeedbackBtn');
             trackBtn.href = `track-feedback.html?id=${feedbackId}`;
             successModal.classList.add('active');

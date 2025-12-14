@@ -693,10 +693,25 @@
 
         // Check if there's a feedback ID in URL parameters
         const urlParams = new URLSearchParams(window.location.search);
-        const feedbackIdParam = urlParams.get('id');
+        let feedbackIdParam = urlParams.get('id');
+
+        // Firefox/Privacy fallback: Check session storage if URL param is missing
+        if (!feedbackIdParam) {
+            const storedId = sessionStorage.getItem('lastFeedbackId');
+            if (storedId) {
+                console.log('Retrieved ID from session storage:', storedId);
+                feedbackIdParam = storedId;
+                // Optional: clear it so it doesn't persist forever? 
+                // meaningful to keep it for "back" navigation comfort.
+            }
+        }
+
         if (feedbackIdParam) {
             document.getElementById('feedbackId').value = feedbackIdParam;
-            trackingForm.dispatchEvent(new Event('submit'));
+            // Small delay to ensure DOM is ready and listeners active
+            setTimeout(() => {
+                trackingForm.dispatchEvent(new Event('submit'));
+            }, 100);
         }
     </script>
 </body>
