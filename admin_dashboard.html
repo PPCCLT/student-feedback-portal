@@ -414,11 +414,7 @@
                     btnResolve.textContent = 'Mark Resolved';
                     btnResolve.addEventListener('click', () => onResolve(item.id));
                     if (item.status !== 'resolved') actions.appendChild(btnResolve);
-                    const btnDelete = document.createElement('button');
-                    btnDelete.className = 'btn-action btn-delete';
-                    btnDelete.textContent = 'Delete';
-                    btnDelete.addEventListener('click', () => onDelete(item.id));
-                    actions.appendChild(btnDelete);
+                    // Delete button removed per request
 
                     header.appendChild(meta);
                     header.appendChild(actions);
@@ -521,16 +517,7 @@
                 }
             }
 
-            async function onDelete(id) {
-                if (!confirm('Are you sure you want to delete this feedback?')) return;
-                try {
-                    const res = await fetch(`/api/feedbacks/${encodeURIComponent(id)}`, { method: 'DELETE', credentials: 'include' });
-                    if (!res.ok && res.status !== 204) throw new Error('API error');
-                } catch (_) { /* ignore */ }
-                feedbacks = feedbacks.filter(f => f.id !== id);
-                localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
-                render();
-            }
+            // onDelete function removed
 
             window.filterCategory = function (category) { activeFilters.category = category; render(); };
 
