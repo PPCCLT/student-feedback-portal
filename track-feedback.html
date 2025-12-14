@@ -710,7 +710,13 @@
             document.getElementById('feedbackId').value = feedbackIdParam;
             // Small delay to ensure DOM is ready and listeners active
             setTimeout(() => {
-                trackingForm.dispatchEvent(new Event('submit'));
+                const submitBtn = trackingForm.querySelector('button[type="submit"]');
+                if (trackingForm.requestSubmit) {
+                    trackingForm.requestSubmit(submitBtn);
+                } else {
+                    // Fallback for older browsers (though unlikely needed for modern Firefox)
+                    trackingForm.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+                }
             }, 100);
         }
     </script>
