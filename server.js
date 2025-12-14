@@ -186,6 +186,14 @@ function requireAdmin(req, res, next) {
   return authMiddleware(req, res, next);
 }
 
+// Security middleware: Block access to sensitive files
+app.use((req, res, next) => {
+  if (req.path.includes('.env') || req.path.includes('.git') || req.path.includes('node_modules')) {
+    return res.status(403).send('Forbidden');
+  }
+  next();
+});
+
 // Serve static files from the root directory
 app.use(express.static('.'));
 
@@ -224,7 +232,6 @@ async function initMongo() {
     feedbacksCollection = null;
   }
 }
-initMongo();
 
 // Global process-level error handlers to avoid silent crashes
 process.on('uncaughtException', (err) => {
@@ -507,10 +514,16 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-  console.log(`[mongo] ${mongoClient ? 'Connected to MongoDB' : 'not available, using JSON file storage'}`);
-  console.log('==> ///////////////////////////////////////////////////////////');
-});
+
+async function startServer() {
+  await initMongo();
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`[mongo] ${mongoClient ? 'Connected to MongoDB' : 'using JSON file fallback'}`);
+    console.log('==> ///////////////////////////////////////////////////////////');
+  });
+}
+
+startServer();
 
 
