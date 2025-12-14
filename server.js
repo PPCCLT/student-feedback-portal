@@ -375,9 +375,7 @@ app.post('/api/feedbacks', async (req, res, next) => {
       ...(courseNo ? { courseNo: String(courseNo).trim().slice(0, maxShortLen) } : {}),
       status: 'pending',
       createdAt: now.toISOString(),
-      createdAtDisplay: new Intl.DateTimeFormat(undefined, {
-        year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit'
-      }).format(now)
+      createdAt: now.toISOString()
     };
 
     if (feedbacksCollection) {
@@ -425,9 +423,7 @@ app.patch('/api/feedbacks/:id/status', requireAdmin, async (req, res, next) => {
     const updateData = {
       status,
       updatedAt: new Date().toISOString(),
-      updatedAtDisplay: new Intl.DateTimeFormat(undefined, {
-        year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit'
-      }).format(new Date())
+      updatedAt: new Date().toISOString()
     };
 
     if (adminComment) {

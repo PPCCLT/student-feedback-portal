@@ -488,7 +488,7 @@
                     footer.style.fontSize = '12px';
                     footer.style.color = '#999';
                     const submitted = document.createElement('span');
-                    submitted.textContent = 'Submitted: ' + (item.createdAtDisplay || new Date(item.createdAt).toLocaleString());
+                    submitted.textContent = 'Submitted: ' + new Date(item.createdAt).toLocaleString();
                     const idSpan = document.createElement('span');
                     idSpan.textContent = 'ID: #' + item.id;
                     footer.appendChild(submitted);
