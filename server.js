@@ -324,7 +324,8 @@ app.get('/api/feedbacks', async (req, res, next) => {
       if (search) {
         mongoQuery.$or = [
           { text: { $regex: search, $options: 'i' } },
-          { suggestions: { $regex: search, $options: 'i' } }
+          { suggestions: { $regex: search, $options: 'i' } },
+          { portalSuggestions: { $regex: search, $options: 'i' } }
         ];
       }
       const cursor = feedbacksCollection.find(mongoQuery).sort({ createdAt: -1 }).skip(skip).limit(limit);
@@ -339,7 +340,9 @@ app.get('/api/feedbacks', async (req, res, next) => {
     if (search) {
       const s = search.toLowerCase();
       filtered = filtered.filter((f) =>
-        (f.text && f.text.toLowerCase().includes(s)) || (f.suggestions && f.suggestions.toLowerCase().includes(s))
+        (f.text && f.text.toLowerCase().includes(s)) || 
+        (f.suggestions && f.suggestions.toLowerCase().includes(s)) ||
+        (f.portalSuggestions && f.portalSuggestions.toLowerCase().includes(s))
       );
     }
     const total = filtered.length;
@@ -352,7 +355,7 @@ app.get('/api/feedbacks', async (req, res, next) => {
 
 // Create feedback
 app.post('/api/feedbacks', async (req, res, next) => {
-  const { category, subcategory, text, suggestions, studentName, rollNo, department, courseNo } = req.body || {};
+  const { category, subcategory, text, suggestions, portalSuggestions, studentName, rollNo, department, courseNo } = req.body || {};
   if (!category || !text) {
     return res.status(400).json({ error: 'category, text are required' });
   }
@@ -368,6 +371,7 @@ app.post('/api/feedbacks', async (req, res, next) => {
       text: String(text).trim().slice(0, maxTextLen),
       // Optional free-text suggestions from the student
       ...(suggestions ? { suggestions: String(suggestions).trim().slice(0, maxSuggestionsLen) } : {}),
+      ...(portalSuggestions ? { portalSuggestions: String(portalSuggestions).trim().slice(0, maxSuggestionsLen) } : {}),
       // Optional student fields (only stored if provided)
       ...(studentName ? { studentName: String(studentName).trim().slice(0, maxNameLen) } : {}),
       ...(rollNo ? { rollNo: String(rollNo).trim().slice(0, maxShortLen) } : {}),

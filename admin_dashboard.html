@@ -343,6 +343,14 @@
                     if (!res.ok) throw new Error('API error');
                     const json = await res.json();
                     feedbacks = Array.isArray(json) ? json : (json && json.data) || [];
+                    // Debug: Log the first feedback item to check structure
+                    if (feedbacks.length > 0) {
+                        console.log('First feedback item:', {
+                            id: feedbacks[0].id,
+                            hasPortalSuggestions: 'portalSuggestions' in feedbacks[0],
+                            portalSuggestions: feedbacks[0].portalSuggestions
+                        });
+                    }
                     // Ensure newest first
                     feedbacks.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                     try { localStorage.setItem('feedbacks', JSON.stringify(feedbacks)); } catch (_) { }
