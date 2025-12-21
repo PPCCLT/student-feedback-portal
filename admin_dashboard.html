@@ -432,39 +432,6 @@
                     const text = document.createElement('p');
                     text.style.color = '#333';
                     text.style.lineHeight = '1.6';
-                    text.style.marginBottom = '12px';
-                    text.style.fontSize = '14px';
-                    text.textContent = item.text;
-                    wrapper.appendChild(text);
-
-                    if (item.suggestions && item.suggestions.trim()) {
-                        const suggestionsEl = document.createElement('div');
-                        suggestionsEl.style.marginTop = '12px';
-                        suggestionsEl.style.padding = '12px';
-                        suggestionsEl.style.backgroundColor = '#f0f7ff';
-                        suggestionsEl.style.borderLeft = '4px solid #1e5ba8';
-                        suggestionsEl.style.borderRadius = '4px';
-                        const label = document.createElement('p');
-                        label.style.fontWeight = '600';
-                        label.style.color = '#1e5ba8';
-                        label.style.marginBottom = '6px';
-                        label.style.fontSize = '13px';
-                        label.textContent = '💡 Suggestions:';
-                        const sText = document.createElement('p');
-                        sText.style.margin = '0';
-                        sText.style.fontSize = '14px';
-                        sText.style.color = '#333';
-                        sText.textContent = item.suggestions;
-                        suggestionsEl.appendChild(label);
-                        suggestionsEl.appendChild(sText);
-                        wrapper.appendChild(suggestionsEl);
-                    }
-
-                    if (item.studentName || item.rollNo || item.department || item.courseNo) {
-                        const info = document.createElement('div');
-                        info.style.marginTop = '12px';
-                        info.style.padding = '10px';
-                        info.style.backgroundColor = '#fafafa';
                         info.style.borderRadius = '4px';
                         info.style.fontSize = '13px';
                         info.style.color = '#666';
