@@ -672,6 +672,13 @@
                             </div>
                         ` : ''}
                         
+                        ${feedback.portalSuggestions ? `
+                            <div class="suggestions" style="background-color: #f5f0ff; border-left: 4px solid #6f42c1; margin-top: 15px;">
+                                <span class="suggestions-label" style="color: #6f42c1; font-weight: 600;">Portal Improvement Suggestions:</span>
+                                <div style="margin-top: 5px;">${feedback.portalSuggestions}</div>
+                            </div>
+                        ` : ''}
+                        
                         <div class="progress-timeline">
                             <div class="timeline-title">Progress Timeline</div>
                             ${timelineHTML}
