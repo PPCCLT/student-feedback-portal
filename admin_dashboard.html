@@ -449,7 +449,7 @@
                         label.style.color = '#1e5ba8';
                         label.style.marginBottom = '6px';
                         label.style.fontSize = '13px';
-                        label.textContent = '💡 Suggestions:';
+                        label.textContent = '💡 Suggestions for Improvement:';
                         const sText = document.createElement('p');
                         sText.style.margin = '0';
                         sText.style.fontSize = '14px';
@@ -458,6 +458,29 @@
                         suggestionsEl.appendChild(label);
                         suggestionsEl.appendChild(sText);
                         wrapper.appendChild(suggestionsEl);
+                    }
+
+                    if (item.portalSuggestions && item.portalSuggestions.trim()) {
+                        const portalSuggestionsEl = document.createElement('div');
+                        portalSuggestionsEl.style.marginTop = '12px';
+                        portalSuggestionsEl.style.padding = '12px';
+                        portalSuggestionsEl.style.backgroundColor = '#f5f0ff';
+                        portalSuggestionsEl.style.borderLeft = '4px solid #6f42c1';
+                        portalSuggestionsEl.style.borderRadius = '4px';
+                        const label = document.createElement('p');
+                        label.style.fontWeight = '600';
+                        label.style.color = '#6f42c1';
+                        label.style.marginBottom = '6px';
+                        label.style.fontSize = '13px';
+                        label.textContent = '💡 Portal Improvement Suggestions:';
+                        const pText = document.createElement('p');
+                        pText.style.margin = '0';
+                        pText.style.fontSize = '14px';
+                        pText.style.color = '#333';
+                        pText.textContent = item.portalSuggestions;
+                        portalSuggestionsEl.appendChild(label);
+                        portalSuggestionsEl.appendChild(pText);
+                        wrapper.appendChild(portalSuggestionsEl);
                     }
 
                     if (item.studentName || item.rollNo || item.department || item.courseNo) {

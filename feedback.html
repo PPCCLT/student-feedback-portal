@@ -413,6 +413,15 @@
                         </div>
                     </div>
 
+                     <div class="form-grid full-width">
+                        <div class="form-group">
+                            <label>Do you have any suggestions or recommendations to improve this feedback portal? <span class="optional">(Optional)</span></label>
+                            <textarea id="portalSuggestions" placeholder="Any suggestions on how we can improve this portal?"
+                                rows="4"></textarea>
+                        </div>
+                    </div>
+
+
                     <div class="submit-section">
                         <button type="submit" class="btn-submit">
                             Submit Feedback
@@ -469,6 +478,7 @@
                 category: document.getElementById('category').value,
                 text: document.getElementById('feedbackText').value,
                 suggestions: document.getElementById('suggestions').value,
+                portalSuggestions: document.getElementById('portalSuggestions').value,
                 createdAt: new Date().toISOString()
             };
 
