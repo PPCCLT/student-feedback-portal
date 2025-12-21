@@ -103,7 +103,7 @@
         .container {
             max-width: 1400px;
             margin: 30px auto;
-            padding: 20px;
+            padding: 0 20px;
         }
 
         .dashboard-header {
@@ -204,13 +204,36 @@
         }
 
         .category-badge {
-            display: inline-block;
-            padding: 5px 12px;
-            border-radius: 15px;
-            font-size: 12px;
-            font-weight: 600;
             background: #e3f2fd;
             color: #1e5ba8;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .resolved-badge {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .progress-badge {
+            background: #fff8e1;
+            color: #ff8f00;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
         .btn-action {
@@ -218,9 +241,9 @@
             border: none;
             border-radius: 5px;
             font-size: 12px;
-            cursor: pointer;
-            transition: opacity 0.3s;
             font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
         }
 
         .btn-resolve {
@@ -228,26 +251,101 @@
             color: white;
         }
 
+        .btn-resolve:hover {
+            background: #3d8b40;
+        }
+
         .btn-delete {
             background: #f44336;
             color: white;
         }
 
-        .status-resolved {
-            background: #f1f8f4;
-            border-left: 4px solid #4caf50;
+        .btn-delete:hover {
+            background: #d32f2f;
         }
 
-        footer {
-            padding: 30px 5%;
-            background: #1e5ba8;
-            text-align: center;
+        .btn-progress {
+            background: #ff9800;
             color: white;
-            margin-top: 50px;
         }
 
-        footer p {
+        .btn-progress:hover {
+            background: #e68a00;
+        }
+
+        .feedback-text {
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 12px;
             font-size: 14px;
+        }
+
+        .suggestions-box {
+            margin-top: 12px;
+            padding: 12px;
+            background: #f0f7ff;
+            border-left: 4px solid #1e5ba8;
+            border-radius: 4px;
+            margin-bottom: 12px;
+        }
+
+        .suggestions-box h4 {
+            color: #1e5ba8;
+            margin-bottom: 6px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .suggestions-box p {
+            margin: 0;
+            font-size: 14px;
+            color: #333;
+            white-space: pre-line;
+        }
+
+        .portal-suggestions-box {
+            margin-top: 0;
+            padding: 12px;
+            background: #f5f0ff;
+            border-left: 4px solid #6f42c1;
+            border-radius: 4px;
+            margin-bottom: 12px;
+        }
+
+        .portal-suggestions-box h4 {
+            color: #6f42c1;
+            margin-bottom: 6px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .portal-suggestions-box p {
+            margin: 0;
+            font-size: 14px;
+            color: #333;
+            white-space: pre-line;
+        }
+
+        .feedback-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            font-size: 12px;
+            color: #777;
+        }
+
+        .status-resolved {
+            opacity: 0.8;
+            background: #f8f9fa;
+        }
+
+        .status-resolved .feedback-text {
+            color: #666;
+        }
+
+        .status-in-progress {
+            border-left: 4px solid #ff9800;
         }
     </style>
 </head>
@@ -256,299 +354,329 @@
     <nav class="navbar">
         <div class="logo">
             <div class="logo-container">
-                <img src="assets/logos/IITB logo.png" alt="Institute Logo" class="logo-img"
-                    onerror="this.style.display='none'">
+                <img src="https://www.example.com/logo.png" alt="College Logo" class="logo-img">
                 <div class="logo-text">
-                    <div class="logo-main-text">Indian Institute of Technology Bombay</div>
-                    <div class="logo-sub-text">🔧 Super Admin Dashboard</div>
+                    <div class="logo-main-text">Student Feedback Portal</div>
+                    <div class="logo-sub-text">Super Admin Dashboard</div>
                 </div>
             </div>
         </div>
         <div class="nav-links">
-            <a href="admin_login.html?switch=1">Switch Department</a>
-            <button class="btn-logout" onclick="logout()">Logout</button>
+            <a href="#" onclick="logout()">Logout</a>
         </div>
     </nav>
 
     <div class="container">
         <div class="dashboard-header">
-            <h1>Super Admin Dashboard <span
-                    style="display:inline-block;background:#e3f2fd;color:#1e5ba8;padding:5px 12px;border-radius:15px;font-size:12px;font-weight:600;margin-left:10px;">SUPER
-                    ADMIN</span></h1>
-            <p>Manage and review all student feedback across all departments</p>
+            <h1>Feedback Dashboard</h1>
+            <p>View and manage all student feedback submissions</p>
         </div>
 
         <div class="stats-grid">
             <div class="stat-card">
-                <h3 id="stat-total">0</h3>
+                <h3 id="totalFeedback">0</h3>
                 <p>Total Feedback</p>
             </div>
             <div class="stat-card">
-                <h3 id="stat-pending">0</h3>
-                <p>Pending Review</p>
+                <h3 id="pendingFeedback">0</h3>
+                <p>Pending</p>
             </div>
             <div class="stat-card">
-                <h3 id="stat-resolved">0</h3>
+                <h3 id="inProgressFeedback">0</h3>
+                <p>In Progress</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="resolvedFeedback">0</h3>
                 <p>Resolved</p>
             </div>
-
         </div>
 
         <div class="filters">
-            <label>Filter by:</label>
-            <select onchange="filterCategory(this.value)">
-                <option value="all">All Categories</option>
-                <option value="Lectures">Lectures</option>
-                <option value="Classrooms">Classrooms</option>
-                <option value="Facilities">Facilities</option>
-                <option value="Events">Events</option>
-                <option value="Other">Other</option>
-            </select>
-
-            <select onchange="filterStatus(this.value)">
-                <option value="all">All Status</option>
-                <option value="pending">Pending</option>
-                <option value="resolved">Resolved</option>
-            </select>
+            <div>
+                <label for="categoryFilter">Filter by Category:</label>
+                <select id="categoryFilter" onchange="filterCategory(this.value)">
+                    <option value="">All Categories</option>
+                    <option value="Academic">Academic</option>
+                    <option value="Facilities">Facilities</option>
+                    <option value="Administrative">Administrative</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <div>
+                <label for="statusFilter">Filter by Status:</label>
+                <select id="statusFilter" onchange="filterStatus(this.value)">
+                    <option value="">All Statuses</option>
+                    <option value="pending">Pending</option>
+                    <option value="in-progress">In Progress</option>
+                    <option value="resolved">Resolved</option>
+                </select>
+            </div>
         </div>
 
-        <div id="feedbackList" class="feedback-list"></div>
+        <div class="feedback-list" id="feedbackList">
+            <!-- Feedback items will be dynamically inserted here -->
+        </div>
     </div>
 
-    <footer>
-        <p>&copy; 2025 Student Feedback Portal. All rights reserved.</p>
-    </footer>
-
     <script>
-        (function () {
-            const listEl = document.getElementById('feedbackList');
-            const statTotal = document.getElementById('stat-total');
-            const statPending = document.getElementById('stat-pending');
-            const statResolved = document.getElementById('stat-resolved');
+        // Global variables
+        let feedbacks = [];
+        const listEl = document.getElementById('feedbackList');
+        const totalEl = document.getElementById('totalFeedback');
+        const pendingEl = document.getElementById('pendingFeedback');
+        const inProgressEl = document.getElementById('inProgressFeedback');
+        const resolvedEl = document.getElementById('resolvedFeedback');
 
-            let feedbacks = [];
-            let activeFilters = { category: 'all', status: 'all' };
+        // Load feedbacks from localStorage
+        async function load() {
+            try {
+                const response = await fetch('/api/feedbacks');
+                feedbacks = await response.json();
+                // Sort by date (newest first)
+                feedbacks.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                render();
+            } catch (error) {
+                console.error('Error loading feedbacks:', error);
+                // Fallback to localStorage if API fails
+                const stored = localStorage.getItem('feedbacks');
+                if (stored) {
+                    feedbacks = JSON.parse(stored);
+                    render();
+                }
+            }
+        }
 
-            // Access control
-            const adminDept = sessionStorage.getItem('adminDept');
-            if (adminDept !== 'super') {
-                alert('Access denied. Please login as Super Admin.');
-                window.location.href = 'admin_login.html';
+        // Save feedbacks to localStorage
+        function save() {
+            localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
+            renderStats();
+        }
+
+        // Filter feedbacks
+        function matchesFilters(item) {
+            const category = document.getElementById('categoryFilter').value;
+            const status = document.getElementById('statusFilter').value;
+
+            return (!category || item.category === category) &&
+                   (!status || item.status === status);
+        }
+
+        // Render feedback stats
+        function renderStats() {
+            const total = feedbacks.length;
+            const pending = feedbacks.filter(f => !f.status || f.status === 'pending').length;
+            const inProgress = feedbacks.filter(f => f.status === 'in-progress').length;
+            const resolved = feedbacks.filter(f => f.status === 'resolved').length;
+
+            totalEl.textContent = total;
+            pendingEl.textContent = pending;
+            inProgressEl.textContent = inProgress;
+            resolvedEl.textContent = resolved;
+        }
+
+        // Render feedback list
+        function render() {
+            listEl.innerHTML = '';
+            const items = feedbacks.filter(matchesFilters);
+
+            if (items.length === 0) {
+                const empty = document.createElement('div');
+                empty.className = 'feedback-item';
+                empty.innerHTML = '<p style="color:#666">No feedback found matching your filters.</p>';
+                listEl.appendChild(empty);
+                renderStats();
                 return;
             }
 
-            async function load() {
-                try {
-                    const res = await fetch('/api/feedbacks?limit=20&page=1');
-                    if (!res.ok) throw new Error('API error');
-                    const json = await res.json();
-                    feedbacks = Array.isArray(json) ? json : (json && json.data) || [];
-                    // Ensure newest first
-                    feedbacks.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                    try { localStorage.setItem('feedbacks', JSON.stringify(feedbacks)); } catch (_) { }
-                } catch (_) {
-                    try { feedbacks = JSON.parse(localStorage.getItem('feedbacks') || '[]'); } catch (_) { feedbacks = []; }
-                    // Ensure newest first for offline copy as well
-                    feedbacks.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                }
-            }
+            items.forEach(item => {
+                const wrapper = document.createElement('div');
+                let statusClass = '';
+                if (item.status === 'resolved') statusClass = ' status-resolved';
+                else if (item.status === 'in-progress') statusClass = ' status-in-progress';
+                wrapper.className = 'feedback-item' + statusClass;
+                wrapper.dataset.id = item.id;
 
+                const header = document.createElement('div');
+                header.className = 'feedback-header';
 
+                const meta = document.createElement('div');
+                meta.className = 'feedback-meta';
+                const cat = document.createElement('span');
+                cat.className = 'category-badge';
+                cat.textContent = item.category || 'General';
+                meta.appendChild(cat);
 
-            function matchesFilters(item) {
-                if (activeFilters.category !== 'all' && item.category !== activeFilters.category) return false;
-                if (activeFilters.status !== 'all' && item.status !== activeFilters.status) return false;
-                return true;
-            }
-
-            function renderStats() {
-                const total = feedbacks.length;
-                const resolved = feedbacks.filter(f => f.status === 'resolved').length;
-                const pending = total - resolved;
-                statTotal.textContent = total;
-                statResolved.textContent = resolved;
-                statPending.textContent = pending;
-            }
-
-            function render() {
-                listEl.innerHTML = '';
-                const items = feedbacks.filter(matchesFilters);
-                if (items.length === 0) {
-                    const empty = document.createElement('div');
-                    empty.className = 'feedback-item';
-                    empty.innerHTML = '<p style="color:#666">No feedback found.</p>';
-                    listEl.appendChild(empty);
-                    renderStats();
-                    return;
+                if (item.status === 'resolved') {
+                    const res = document.createElement('span');
+                    res.className = 'resolved-badge';
+                    res.textContent = '✓ Resolved';
+                    meta.appendChild(res);
+                } else if (item.status === 'in-progress') {
+                    const prog = document.createElement('span');
+                    prog.className = 'progress-badge';
+                    prog.textContent = '⏳ In Progress';
+                    meta.appendChild(prog);
                 }
 
-                items.forEach(item => {
-                    const wrapper = document.createElement('div');
-                    wrapper.className = 'feedback-item' + (item.status === 'resolved' ? ' status-resolved' : '');
-                    wrapper.dataset.id = item.id;
+                const actions = document.createElement('div');
+                actions.className = 'action-buttons';
 
-                    const header = document.createElement('div');
-                    header.className = 'feedback-header';
+                if (item.status === 'pending') {
+                    const btnProgress = document.createElement('button');
+                    btnProgress.className = 'btn-action btn-progress';
+                    btnProgress.textContent = 'Start Progress';
+                    btnProgress.addEventListener('click', () => onUpdateStatus(item.id, 'in-progress'));
+                    actions.appendChild(btnProgress);
+                }
 
-                    const meta = document.createElement('div');
-                    meta.className = 'feedback-meta';
-                    const cat = document.createElement('span');
-                    cat.className = 'category-badge';
-                    cat.textContent = item.category;
-                    meta.appendChild(cat);
-                    if (item.status === 'resolved') {
-                        const resBadge = document.createElement('span');
-                        resBadge.style.background = '#4caf50';
-                        resBadge.style.color = '#fff';
-                        resBadge.style.padding = '3px 10px';
-                        resBadge.style.borderRadius = '12px';
-                        resBadge.style.fontSize = '11px';
-                        resBadge.style.fontWeight = '600';
-                        resBadge.textContent = '✓ Resolved';
-                        meta.appendChild(resBadge);
-                    }
-
-                    const actions = document.createElement('div');
+                if (item.status !== 'resolved') {
                     const btnResolve = document.createElement('button');
                     btnResolve.className = 'btn-action btn-resolve';
                     btnResolve.textContent = 'Mark Resolved';
-                    btnResolve.addEventListener('click', () => onResolve(item.id));
-                    if (item.status !== 'resolved') actions.appendChild(btnResolve);
-                    // Delete button removed per request
+                    btnResolve.addEventListener('click', () => onUpdateStatus(item.id, 'resolved'));
+                    actions.appendChild(btnResolve);
+                }
 
-                    header.appendChild(meta);
-                    header.appendChild(actions);
-                    wrapper.appendChild(header);
+                header.appendChild(meta);
+                header.appendChild(actions);
+                wrapper.appendChild(header);
 
-                    if (item.subcategory) {
-                        const subEl = document.createElement('div');
-                        subEl.style.marginBottom = '10px';
-                        subEl.style.fontSize = '13px';
-                        subEl.style.color = '#666';
-                        subEl.innerHTML = '<strong style="color:#1e5ba8;">Subcategory:</strong> ' + item.subcategory;
-                        wrapper.appendChild(subEl);
-                    }
+                if (item.subcategory) {
+                    const subEl = document.createElement('div');
+                    subEl.style.marginBottom = '10px';
+                    subEl.style.fontSize = '13px';
+                    subEl.style.color = '#666';
+                    subEl.innerHTML = '<strong style="color:#1e5ba8;">Subcategory:</strong> ' + item.subcategory;
+                    wrapper.appendChild(subEl);
+                }
 
-                    const text = document.createElement('p');
-                    text.style.color = '#333';
-                    text.style.lineHeight = '1.6';
-                    text.style.marginBottom = '12px';
-                    text.style.fontSize = '14px';
-                    text.textContent = item.text;
-                    wrapper.appendChild(text);
+                const text = document.createElement('p');
+                text.className = 'feedback-text';
+                text.textContent = item.text;
+                wrapper.appendChild(text);
 
-                    if (item.suggestions && item.suggestions.trim()) {
-                        const suggestionsEl = document.createElement('div');
-                        suggestionsEl.style.marginTop = '12px';
-                        suggestionsEl.style.padding = '12px';
-                        suggestionsEl.style.backgroundColor = '#f0f7ff';
-                        suggestionsEl.style.borderLeft = '4px solid #1e5ba8';
-                        suggestionsEl.style.borderRadius = '4px';
-                        const label = document.createElement('p');
-                        label.style.fontWeight = '600';
-                        label.style.color = '#1e5ba8';
-                        label.style.marginBottom = '6px';
-                        label.style.fontSize = '13px';
-                        label.textContent = '💡 Suggestions for Improvement:';
-                        const sText = document.createElement('p');
-                        sText.style.margin = '0';
-                        sText.style.fontSize = '14px';
-                        sText.style.color = '#333';
-                        sText.textContent = item.suggestions;
-                        suggestionsEl.appendChild(label);
-                        suggestionsEl.appendChild(sText);
-                        wrapper.appendChild(suggestionsEl);
-                    }
+                // Regular suggestions
+                if (item.suggestions && item.suggestions.trim()) {
+                    const suggestionsEl = document.createElement('div');
+                    suggestionsEl.className = 'suggestions-box';
+                    const label = document.createElement('h4');
+                    label.textContent = '💡 Suggestions for Improvement:';
+                    const sText = document.createElement('p');
+                    sText.textContent = item.suggestions;
+                    suggestionsEl.appendChild(label);
+                    suggestionsEl.appendChild(sText);
+                    wrapper.appendChild(suggestionsEl);
+                }
 
-                    if (item.portalSuggestions && item.portalSuggestions.trim()) {
-                        const portalSuggestionsEl = document.createElement('div');
-                        portalSuggestionsEl.style.marginTop = '12px';
-                        portalSuggestionsEl.style.padding = '12px';
-                        portalSuggestionsEl.style.backgroundColor = '#f5f0ff';
-                        portalSuggestionsEl.style.borderLeft = '4px solid #6f42c1';
-                        portalSuggestionsEl.style.borderRadius = '4px';
-                        const label = document.createElement('p');
-                        label.style.fontWeight = '600';
-                        label.style.color = '#6f42c1';
-                        label.style.marginBottom = '6px';
-                        label.style.fontSize = '13px';
-                        label.textContent = '💡 Portal Improvement Suggestions:';
-                        const pText = document.createElement('p');
-                        pText.style.margin = '0';
-                        pText.style.fontSize = '14px';
-                        pText.style.color = '#333';
-                        pText.textContent = item.portalSuggestions;
-                        portalSuggestionsEl.appendChild(label);
-                        portalSuggestionsEl.appendChild(pText);
-                        wrapper.appendChild(portalSuggestionsEl);
-                    }
+                // Portal suggestions
+                if (item.portalSuggestions && item.portalSuggestions.trim()) {
+                    const portalSuggestionsEl = document.createElement('div');
+                    portalSuggestionsEl.className = 'portal-suggestions-box';
+                    const label = document.createElement('h4');
+                    label.textContent = '💡 Portal Improvement Suggestions:';
+                    const pText = document.createElement('p');
+                    pText.textContent = item.portalSuggestions;
+                    portalSuggestionsEl.appendChild(label);
+                    portalSuggestionsEl.appendChild(pText);
+                    wrapper.appendChild(portalSuggestionsEl);
+                }
 
-                    if (item.studentName || item.rollNo || item.department || item.courseNo) {
-                        const info = document.createElement('div');
-                        info.style.marginTop = '12px';
-                        info.style.padding = '10px';
-                        info.style.backgroundColor = '#fafafa';
-                        info.style.borderRadius = '4px';
-                        info.style.fontSize = '13px';
-                        info.style.color = '#666';
-                        const parts = [];
-                        if (item.studentName) parts.push('<strong>Name:</strong> ' + item.studentName);
-                        if (item.rollNo) parts.push('<strong>Roll No:</strong> ' + item.rollNo);
-                        if (item.department) parts.push('<strong>Department:</strong> ' + item.department);
-                        if (item.courseNo) parts.push('<strong>Course:</strong> ' + item.courseNo);
-                        info.innerHTML = parts.join(' &nbsp;•&nbsp; ');
-                        wrapper.appendChild(info);
-                    }
+                // Student info
+                if (item.studentName || item.rollNo || item.department || item.courseNo) {
+                    const info = document.createElement('div');
+                    info.style.marginTop = '12px';
+                    info.style.padding = '10px';
+                    info.style.backgroundColor = '#fafafa';
+                    info.style.borderRadius = '4px';
+                    info.style.fontSize = '13px';
+                    info.style.color = '#666';
+                    
+                    const parts = [];
+                    if (item.studentName) parts.push(`<strong>Name:</strong> ${item.studentName}`);
+                    if (item.rollNo) parts.push(`<strong>Roll No:</strong> ${item.rollNo}`);
+                    if (item.department) parts.push(`<strong>Department:</strong> ${item.department}`);
+                    if (item.courseNo) parts.push(`<strong>Course:</strong> ${item.courseNo}`);
+                    
+                    info.innerHTML = parts.join(' &nbsp;•&nbsp; ');
+                    wrapper.appendChild(info);
+                }
 
-                    const footer = document.createElement('div');
-                    footer.style.display = 'flex';
-                    footer.style.justifyContent = 'space-between';
-                    footer.style.alignItems = 'center';
-                    footer.style.fontSize = '12px';
-                    footer.style.color = '#999';
-                    const submitted = document.createElement('span');
-                    submitted.textContent = 'Submitted: ' + new Date(item.createdAt).toLocaleString();
-                    const idSpan = document.createElement('span');
-                    idSpan.textContent = 'ID: #' + item.id;
-                    footer.appendChild(submitted);
-                    footer.appendChild(idSpan);
-                    wrapper.appendChild(footer);
+                const footer = document.createElement('div');
+                footer.className = 'feedback-footer';
+                
+                const submitted = document.createElement('span');
+                submitted.textContent = 'Submitted: ' + new Date(item.createdAt).toLocaleString();
+                
+                const idSpan = document.createElement('span');
+                idSpan.textContent = 'ID: #' + item.id;
+                
+                footer.appendChild(submitted);
+                footer.appendChild(idSpan);
+                wrapper.appendChild(footer);
+                
+                listEl.appendChild(wrapper);
+            });
 
-                    listEl.appendChild(wrapper);
+            renderStats();
+        }
+
+        // Update feedback status
+        async function onUpdateStatus(id, status) {
+            try {
+                const response = await fetch(`/api/feedbacks/${id}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status })
                 });
-
-                renderStats();
-            }
-
-            async function onResolve(id) {
-                try {
-                    const res = await fetch(`/api/feedbacks/${encodeURIComponent(id)}/resolve`, { method: 'PATCH', credentials: 'include' });
-                    if (!res.ok) throw new Error('API error');
-                    const updated = await res.json();
-                    const idx = feedbacks.findIndex(f => f.id === id);
-                    if (idx !== -1) feedbacks[idx] = updated;
-                    localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
+                
+                if (response.ok) {
+                    const index = feedbacks.findIndex(f => f.id === id);
+                    if (index !== -1) {
+                        feedbacks[index].status = status;
+                        save();
+                        render();
+                    }
+                }
+            } catch (error) {
+                console.error('Error updating status:', error);
+                // Fallback to local storage
+                const index = feedbacks.findIndex(f => f.id === id);
+                if (index !== -1) {
+                    feedbacks[index].status = status;
+                    save();
                     render();
-                    alert('Feedback marked as resolved!');
-                } catch (_) {
-                    const idx = feedbacks.findIndex(f => f.id === id);
-                    if (idx === -1) return;
-                    feedbacks[idx].status = 'resolved';
-                    localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
-                    render();
-                    alert('Feedback marked as resolved (offline)');
                 }
             }
+        }
 
-            // onDelete function removed
+        // Filter by category
+        function filterCategory(category) {
+            render();
+        }
 
-            window.filterCategory = function (category) { activeFilters.category = category; render(); };
+        // Filter by status
+        function filterStatus(status) {
+            render();
+        }
 
-            window.filterStatus = function (status) { activeFilters.status = status; render(); };
-            window.logout = function () { sessionStorage.clear(); window.location.href = 'admin_login.html'; };
+        // Logout
+        function logout() {
+            // Clear any session data
+            localStorage.removeItem('adminToken');
+            // Redirect to login page
+            window.location.href = 'admin_login.html';
+        }
 
-            (async function init() { await load(); render(); })();
-        })();
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            load();
+            
+            // Add event listener for the logout button
+            document.querySelector('.nav-links a[onclick="logout()"]').addEventListener('click', (e) => {
+                e.preventDefault();
+                logout();
+            });
+        });
     </script>
 </body>
 
