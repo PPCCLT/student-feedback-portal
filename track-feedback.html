@@ -589,7 +589,6 @@
             let timelineHTML = '';
             const timelineSteps = [
                 { key: 'submitted', label: 'Feedback Submitted', completed: true },
-                { key: 'reviewed', label: 'Under Review', completed: feedback.status === 'in-progress' || feedback.status === 'resolved' },
                 { key: 'resolved', label: 'Action Taken', completed: feedback.status === 'resolved' }
             ];
 
@@ -597,8 +596,6 @@
                 let dotClass = 'pending';
                 if (step.completed) {
                     dotClass = 'completed';
-                } else if (feedback.status === 'in-progress' && step.key === 'reviewed') {
-                    dotClass = 'current';
                 } else if (feedback.status === 'resolved' && step.key === 'resolved') {
                     dotClass = 'current';
                 }
@@ -622,10 +619,6 @@
                             <div class="meta-item">
                                 <div class="meta-label">Category</div>
                                 <div class="meta-value">${feedback.category}</div>
-                            </div>
-                            <div class="meta-item">
-                                <div class="meta-label">Subcategory</div>
-                                <div class="meta-value">${feedback.subcategory || 'N/A'}</div>
                             </div>
 
                             <div class="meta-item">
